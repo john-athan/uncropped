@@ -58,6 +58,33 @@ genuinely its own, it is commented at the point of the choice.
 
 ## Reviewed and cleared
 
-Nothing yet. Findings from `scripts/provenance-check.py` that turn out to be
-convergent output rather than copying belong here, with the date and the
+**2026-09-01. Nine matches on the quota retry in `background.js`. Cleared.**
+
+`scripts/provenance-check.py --all` returned nine repositories that contain the
+same rare identifiers as our `captureVisibleTab` retry, one of them
+(`extension-tools/screenshot-extension`, `code/capture/ViewportCapture.js`)
+under MPL-2.0, which the gate blocks on in a permissive project.
+
+Read side by side, they are not the same code. Theirs is a class method,
+`isQuotaError`, that lowercases the message and runs a chain of `.includes()`
+tests, with a linear backoff of `retryDelay * (attempt + 1)`. Ours is a
+one-line regex predicate feeding a gap that is shared across the whole capture
+run and moves in both directions: it widens when the browser complains and
+narrows again after four clean captures. The only shared material is what the
+platform dictates: the method name `captureVisibleTab`, and the token
+`MAX_CAPTURE_VISIBLE_TAB_CALLS_PER_SECOND`, which is Chrome's own error string
+and therefore appears verbatim in every extension that handles this error at
+all. That is convergence on a constrained API, not copying, and no MPL-2.0
+material is present in this repository.
+
+The other eight matches (MIT or unlicensed) are the same line and the same
 reasoning.
+
+One change followed from the review, for its own sake rather than for
+provenance: the predicate used to also match `too many` and `rate`, neither of
+which occurs in Chrome's message, and `rate` risked classifying an unrelated
+failure as a quota error and retrying it six times. It now matches only the two
+tokens that actually appear.
+
+Findings that turn out to be convergent output rather than copying belong here,
+with the date and the reasoning.

@@ -93,7 +93,9 @@ async function toCanvas(msg) {
 
 // ------------------------------------------------------------------ capture
 
-const isQuota = (e) => /MAX_CAPTURE|quota|too many|rate/i.test(String(e));
+// Chrome's message is "MAX_CAPTURE_VISIBLE_TAB_CALLS_PER_SECOND quota exceeded".
+// Matching wider than that turns an unrelated failure into six pointless retries.
+const isQuota = (e) => /MAX_CAPTURE_VISIBLE_TAB|quota/i.test(String(e));
 
 async function captureTile(windowId, format, quality) {
   const opts = format === 'jpeg' ? { format: 'jpeg', quality } : { format: 'png' };
