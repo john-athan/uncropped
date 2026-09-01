@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1280px;height:800px;overflow:hidden;background:#0e1013;
+    background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px);
+    background-size:26px 26px,26px 26px;
+    color:#f0eee9;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    padding:60px 72px;display:flex;gap:64px;align-items:center;
+  }
+  .left{flex:0 0 460px}
+  h2{font-size:32px;font-weight:600;line-height:1.3}
+  h2 em{font-style:normal;color:#ff6a42}
+  p{font-size:14.5px;line-height:1.75;color:#a7adb8;margin-top:20px}
+  code{color:#ff6a42}
+  ul{list-style:none;margin-top:28px;display:flex;flex-direction:column;gap:12px}
+  li{font-size:13px;color:#8b929c;display:flex;gap:12px;align-items:baseline}
+  li b{color:#f0eee9;font-weight:600}
+  li i{color:#ff6a42;font-style:normal}
+  .right{flex:1;display:flex;justify-content:center}
+  svg{width:100%;max-width:520px;height:auto}
+  .l{font:11px ui-monospace,Menlo,monospace;fill:#8b929c;letter-spacing:.1em}
+  .la{fill:#ff6a42}
+</style></head>
+<body>
+  <div class="left">
+    <h2>It finds the <em>div</em> that is really the page.</h2>
+    <p>App shells make <code>html</code> and <code>body</code> exactly one viewport tall and give the scrolling to a container. To the browser the document has no overflow, so a full size capture is a viewport capture: correct, and useless.</p>
+    <ul>
+      <li><i>&#9656;</i><span><b>Picks the real scroller</b>, including inside open shadow roots.</span></li>
+      <li><i>&#9656;</i><span><b>Crops to the container</b>, so the sidebar is not smeared down the image.</span></li>
+      <li><i>&#9656;</i><span><b>Both axes</b>, for wide tables and kanban boards.</span></li>
+    </ul>
+  </div>
+  <div class="right">
+    <svg viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="40" width="440" height="400" rx="10" fill="#1d222a" stroke="#2a2f37"/>
+      <rect x="40" y="40" width="120" height="400" rx="10" fill="#232932"/>
+      <g fill="#39414c">
+        <rect x="62" y="76" width="76" height="8" rx="4"/><rect x="62" y="98" width="60" height="8" rx="4"/>
+        <rect x="62" y="120" width="70" height="8" rx="4"/><rect x="62" y="142" width="52" height="8" rx="4"/>
+      </g>
+      <rect x="182" y="70" width="270" height="340" rx="8" fill="#f5f3ee"/>
+      <g fill="#cbc6bb">
+        <rect x="204" y="96" width="226" height="9" rx="4.5"/><rect x="204" y="116" width="226" height="9" rx="4.5"/>
+        <rect x="204" y="136" width="150" height="9" rx="4.5"/>
+        <rect x="204" y="176" width="226" height="9" rx="4.5"/><rect x="204" y="196" width="200" height="9" rx="4.5"/>
+        <rect x="204" y="236" width="226" height="9" rx="4.5"/><rect x="204" y="256" width="226" height="9" rx="4.5"/>
+        <rect x="204" y="276" width="130" height="9" rx="4.5"/>
+        <rect x="204" y="316" width="226" height="9" rx="4.5"/><rect x="204" y="336" width="170" height="9" rx="4.5"/>
+      </g>
+      <rect x="174" y="62" width="286" height="356" rx="10" fill="none" stroke="#ff6a42" stroke-width="4" stroke-dasharray="10 7"/>
+      <text class="l la" x="174" y="50">THE ACTUAL PAGE</text>
+      <text class="l" x="40" y="466">DOCUMENT: NO OVERFLOW</text>
+      <path d="M317 372 v34 M307 396 l10 12 l10 -12" fill="none" stroke="#ff6a42" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+  </div>
+</body></html>

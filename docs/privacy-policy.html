@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uncropped: privacy policy</title>
+<style>
+  :root {
+    --paper:#f3f1ec; --card:#fff; --ink:#14171c; --mute:#666c76; --rule:#dbd7ce; --accent:#d1492a;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0e1013; --card:#161a20; --ink:#e9e7e2; --mute:#8b929c; --rule:#2a2f37; --accent:#ff6a42;
+    }
+  }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font:15px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width:680px; margin:0 auto; padding:48px 24px 80px; }
+  h1 { font:600 15px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase; margin:0 0 4px; }
+  .meta { color:var(--mute); font:11.5px var(--mono); letter-spacing:.08em; margin:0 0 36px; }
+  h2 { font:600 12px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:36px 0 8px; }
+  p, li { color:var(--ink); }
+  ul { padding-left:18px; }
+  li { margin-bottom:8px; }
+  code { font:12.5px var(--mono); background:var(--card); border:1px solid var(--rule); border-radius:4px; padding:1px 5px; }
+  .lead { font-size:17px; }
+  a { color:var(--accent); }
+  footer { margin-top:48px; padding-top:18px; border-top:1px solid var(--rule); font:11.5px var(--mono); color:var(--mute); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Uncropped: privacy policy</h1>
+  <p class="meta">Version 1.0.0. Last updated September 2026.</p>
+
+  <p class="lead">Uncropped collects nothing, sends nothing, and has no server to send it to.</p>
+
+  <h2>What it does</h2>
+  <p>When you click the toolbar button, Uncropped scrolls the page in front of you, takes a picture of each screenful through the browser's own capture API, draws those pictures onto one canvas, and saves the result as an image file in your Downloads folder. All of that happens inside your browser.</p>
+
+  <h2>Data collected</h2>
+  <p>None of the following is collected, stored, transmitted, or shared:</p>
+  <ul>
+    <li>Page content, URLs, or browsing history</li>
+    <li>The screenshots themselves, which are written to your disk and nowhere else</li>
+    <li>Personal information of any kind</li>
+    <li>Usage statistics, analytics, crash reports, or telemetry</li>
+  </ul>
+  <p>The extension makes no network requests. It has no analytics library, no remote configuration, and no update channel other than the Chrome Web Store itself.</p>
+
+  <h2>What is stored on your device</h2>
+  <p>Your seven settings, in <code>chrome.storage.sync</code>, which is Chrome's own settings sync. They are output format, JPEG quality, warm up pass, hide fixed bars, settle budget, size ceiling, and whether to be asked where to save. Nothing about pages you visit or screenshots you take is stored.</p>
+
+  <h2>Permissions, and why each one exists</h2>
+  <ul>
+    <li><code>activeTab</code>: temporary access to the page you are looking at, granted by your click and expiring when the tab navigates. This is what lets Uncropped avoid asking for access to every site you will ever visit.</li>
+    <li><code>scripting</code>: injects the page script at the moment you click, rather than on every page load.</li>
+    <li><code>downloads</code>: writes the finished image into your Downloads folder. It does not read what is already there.</li>
+    <li><code>offscreen</code>: opens a hidden extension document that owns the canvas, because a service worker cannot produce a file URL. It loads no page content.</li>
+    <li><code>storage</code>: holds the settings listed above.</li>
+  </ul>
+  <p>There are no host permissions. Uncropped cannot run on a page you have not clicked it on.</p>
+
+  <h2>Third parties</h2>
+  <p>None. The extension bundles no libraries, loads no fonts or scripts from anywhere, and shares data with nobody.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy ever changes, the date above changes with it and the change is described in the release notes.</p>
+
+  <h2>Contact</h2>
+  <p>Open an issue at <a href="https://github.com/john-athan/uncropped">github.com/john-athan/uncropped</a>.</p>
+
+  <footer>MIT licensed. No dependencies. Manifest V3.</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uncropped: screenshots the whole page</title>
+<meta name="description" content="A Chrome extension that captures the entire rendered page, including sideways scroll and inner scroll containers.">
+<style>
+  :root {
+    --paper:#f3f1ec; --card:#ffffff; --ink:#14171c; --mute:#666c76;
+    --rule:#dbd7ce; --accent:#d1492a; --page:#f8f7f3; --bar:#cdc8bd; --grid:#00000008;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#0e1013; --card:#161a20; --ink:#e9e7e2; --mute:#8b929c;
+      --rule:#2a2f37; --accent:#ff6a42; --page:#1d222a; --bar:#39414c; --grid:#ffffff08;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#0e1013; --card:#161a20; --ink:#e9e7e2; --mute:#8b929c;
+    --rule:#2a2f37; --accent:#ff6a42; --page:#1d222a; --bar:#39414c; --grid:#ffffff08;
+  }
+
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font:15px/1.6 var(--sans); overflow-x:hidden;
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:26px 26px,26px 26px;
+  }
+  .wrap { max-width:940px; margin:0 auto; padding:0 24px 72px; }
+
+  /* ---------------------------------------------------------------- header */
+  header { display:flex; align-items:center; gap:16px; padding:34px 0 8px; }
+  .mark { width:52px; height:52px; flex:0 0 auto; }
+  h1 { margin:0; font:600 26px/1 var(--mono); letter-spacing:.2em; text-indent:.2em; }
+  .spacer { flex:1 1 auto; }
+  .themer {
+    font:11px var(--mono); letter-spacing:.1em; color:var(--mute); cursor:pointer;
+    background:none; border:1px solid var(--rule); border-radius:6px; padding:6px 10px;
+  }
+  .themer:hover { color:var(--accent); border-color:var(--accent); }
+  .lede { font:400 19px/1.5 var(--sans); max-width:640px; margin:14px 0 4px; }
+  .lede b { color:var(--accent); font-weight:600; font-family:var(--mono); font-size:.9em; }
+  .cta { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 8px; }
+  .btn {
+    font:12px var(--mono); letter-spacing:.06em; text-decoration:none;
+    color:var(--ink); border:1px solid var(--rule); border-radius:7px; padding:9px 14px; background:var(--card);
+  }
+  .btn:hover { border-color:var(--accent); color:var(--accent); }
+  .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primary:hover { color:#fff; filter:brightness(1.08); }
+
+  /* --------------------------------------------------------------- section */
+  section { padding:44px 0 0; border-top:1px solid var(--rule); margin-top:44px; }
+  h2 {
+    margin:0 0 6px; font:600 12px/1 var(--mono); letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent);
+  }
+  .say { margin:0 0 22px; color:var(--mute); max-width:620px; }
+  figure { margin:0; }
+  .scroller { overflow-x:auto; overflow-y:hidden; padding-bottom:6px; }
+
+  /* ---------------------------------------------------------------- panels */
+  .panels { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; min-width:660px; }
+  .panel { background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:14px; }
+  .panel svg { display:block; width:100%; height:186px; }
+  .panel .cap { font:11px var(--mono); letter-spacing:.06em; color:var(--mute); margin-top:10px; }
+  .panel .cap b { color:var(--ink); font-weight:600; display:block; margin-bottom:2px; }
+
+  /* --------------------------------------------------------------- stepper */
+  .steps { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:12px; min-width:826px; }
+  .step {
+    background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:12px;
+    opacity:1; transition:opacity .25s, border-color .25s, transform .25s;
+  }
+  .js .step { opacity:.34; }
+  .js .step.on { opacity:1; border-color:var(--accent); transform:translateY(-3px); }
+  .step svg { display:block; width:100%; height:104px; }
+  .step .n { font:11px var(--mono); color:var(--accent); letter-spacing:.1em; }
+  .step .t { font-size:12px; line-height:1.45; color:var(--mute); margin-top:6px; }
+  .step .t b { color:var(--ink); font-weight:600; }
+  .controls { display:none; align-items:center; gap:8px; margin-top:16px; }
+  .js .controls { display:flex; }
+  .controls button {
+    font:12px var(--mono); color:var(--ink); background:var(--card);
+    border:1px solid var(--rule); border-radius:6px; padding:6px 11px; cursor:pointer;
+  }
+  .controls button:hover { border-color:var(--accent); color:var(--accent); }
+  .count { font:11px var(--mono); color:var(--mute); letter-spacing:.08em; }
+
+  /* ----------------------------------------------------------------- specs */
+  .specs { width:100%; border-collapse:collapse; font:12.5px var(--mono); min-width:560px; }
+  .specs td { border-top:1px solid var(--rule); padding:10px 8px; vertical-align:top; }
+  .specs td:first-child { color:var(--mute); letter-spacing:.05em; width:40%; }
+  .specs td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .chip {
+    font:11.5px var(--mono); letter-spacing:.04em; color:var(--ink); background:var(--card);
+    border:1px solid var(--rule); border-radius:999px; padding:6px 12px; cursor:help;
+  }
+  .chip:hover { border-color:var(--accent); color:var(--accent); }
+
+  [data-tip] { cursor:help; border-bottom:1px dotted var(--rule); }
+  #tip {
+    position:fixed; z-index:99; max-width:320px; pointer-events:none; opacity:0;
+    transform:translateY(4px); transition:opacity .12s, transform .12s;
+    background:var(--ink); color:var(--paper); border-radius:8px; padding:8px 11px;
+    font:11.5px/1.5 var(--mono); box-shadow:0 10px 30px rgba(0,0,0,.28);
+  }
+  #tip.on { opacity:1; transform:translateY(0); }
+
+  footer {
+    margin-top:52px; padding-top:20px; border-top:1px solid var(--rule);
+    display:flex; flex-wrap:wrap; gap:16px; align-items:center;
+    font:11.5px var(--mono); color:var(--mute); letter-spacing:.05em;
+  }
+  footer a { color:var(--mute); }
+  footer a:hover { color:var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition:none !important; animation:none !important; }
+  }
+  @media (max-width:640px) {
+    h1 { font-size:20px; }
+    .lede { font-size:17px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg class="mark" viewBox="0 0 128 128" aria-label="Uncropped logo" role="img">
+      <rect width="128" height="128" rx="28" fill="#16191f"/>
+      <clipPath id="mk"><rect width="128" height="128" rx="28"/></clipPath>
+      <g clip-path="url(#mk)">
+        <rect x="36" y="-14" width="56" height="156" rx="7" fill="#f5f3ee"/>
+        <g fill="#cbc6bb">
+          <rect x="46" y="27" width="36" height="5" rx="2.5"/>
+          <rect x="46" y="39" width="36" height="5" rx="2.5"/>
+          <rect x="46" y="51" width="24" height="5" rx="2.5"/>
+          <rect x="46" y="77" width="36" height="5" rx="2.5"/>
+          <rect x="46" y="89" width="36" height="5" rx="2.5"/>
+          <rect x="46" y="101" width="24" height="5" rx="2.5"/>
+          <rect x="46" y="113" width="30" height="5" rx="2.5"/>
+        </g>
+        <rect x="23" y="18" width="82" height="45" rx="9" fill="none" stroke="#ff6a42" stroke-width="7"/>
+      </g>
+    </svg>
+    <h1>UNCROPPED</h1>
+    <span class="spacer"></span>
+    <button class="themer" id="themer" type="button">THEME</button>
+  </header>
+
+  <p class="lede">Chrome ships a button called <b>Capture full size screenshot</b>. It captures the viewport. This is that button, but it means it.</p>
+
+  <div class="cta">
+    <a class="btn primary" href="https://github.com/john-athan/uncropped">Source and install</a>
+    <a class="btn" href="privacy-policy.html">Privacy</a>
+    <a class="btn" href="https://github.com/john-athan/uncropped/releases">Releases</a>
+  </div>
+
+  <!-- ------------------------------------------------------------ problem -->
+  <section>
+    <h2>Three ways a page hides</h2>
+    <p class="say">A screenshot tool that only knows about the first one is a screenshot tool that works on blogs.</p>
+    <figure class="scroller">
+      <div class="panels">
+
+        <div class="panel">
+          <svg viewBox="0 0 200 186" role="img" aria-label="Content below the fold">
+            <rect x="52" y="4" width="96" height="178" rx="6" fill="var(--page)"/>
+            <g fill="var(--bar)">
+              <rect x="64" y="20" width="72" height="6" rx="3"/><rect x="64" y="34" width="72" height="6" rx="3"/>
+              <rect x="64" y="48" width="46" height="6" rx="3"/><rect x="64" y="86" width="72" height="6" rx="3"/>
+              <rect x="64" y="100" width="72" height="6" rx="3"/><rect x="64" y="140" width="72" height="6" rx="3"/>
+              <rect x="64" y="154" width="52" height="6" rx="3"/>
+            </g>
+            <rect x="44" y="10" width="112" height="58" rx="7" fill="none" stroke="var(--accent)" stroke-width="3"/>
+            <path d="M100 118 v22 M94 134 l6 8 l6 -8" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="cap" data-tip="The one case DevTools handles, as long as the document itself is the thing that scrolls."><b>Below the fold</b>The easy one.</div>
+        </div>
+
+        <div class="panel">
+          <svg viewBox="0 0 200 186" role="img" aria-label="Content off to the right">
+            <rect x="10" y="40" width="180" height="106" rx="6" fill="var(--page)"/>
+            <g fill="var(--bar)">
+              <rect x="22" y="56" width="156" height="6" rx="3"/><rect x="22" y="70" width="156" height="6" rx="3"/>
+              <rect x="22" y="84" width="156" height="6" rx="3"/><rect x="22" y="112" width="156" height="6" rx="3"/>
+              <rect x="22" y="126" width="120" height="6" rx="3"/>
+            </g>
+            <rect x="18" y="32" width="86" height="122" rx="7" fill="none" stroke="var(--accent)" stroke-width="3"/>
+            <path d="M130 93 h26 M148 85 l10 8 l-10 8" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="cap" data-tip="Wide tables, timelines, kanban boards, code blocks. The document is wider than the window and the right half never gets photographed."><b>Off to the right</b>Wide tables and boards.</div>
+        </div>
+
+        <div class="panel">
+          <svg viewBox="0 0 200 186" role="img" aria-label="Content inside a scrolling container">
+            <rect x="10" y="10" width="180" height="166" rx="6" fill="var(--page)"/>
+            <rect x="10" y="10" width="46" height="166" rx="6" fill="var(--bar)" opacity=".5"/>
+            <rect x="66" y="24" width="114" height="138" rx="5" fill="var(--card)" stroke="var(--rule)"/>
+            <g fill="var(--bar)">
+              <rect x="76" y="36" width="94" height="6" rx="3"/><rect x="76" y="50" width="94" height="6" rx="3"/>
+              <rect x="76" y="64" width="62" height="6" rx="3"/><rect x="76" y="92" width="94" height="6" rx="3"/>
+              <rect x="76" y="106" width="80" height="6" rx="3"/>
+            </g>
+            <rect x="62" y="20" width="122" height="146" rx="7" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="7 5"/>
+            <path d="M123 126 v20 M117 140 l6 8 l6 -8" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="cap" data-tip="An app shell: html and body are exactly one viewport tall and a div does the scrolling. The document has no overflow, so a full size capture is a viewport capture, correctly and uselessly."><b>Inside a div</b>Every app shell built since 2015.</div>
+        </div>
+
+      </div>
+    </figure>
+  </section>
+
+  <!-- --------------------------------------------------------------- run -->
+  <section>
+    <h2>One run</h2>
+    <p class="say">Six steps, about two seconds per screen of page. Nothing leaves the browser.</p>
+    <figure class="scroller">
+      <div class="steps" id="steps">
+
+        <div class="step" data-tip="Lazy images below the fold have not been requested yet and virtualised lists have not rendered their rows. One pass down and back makes them exist before anything is measured.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Warm up pass">
+            <rect x="52" y="6" width="56" height="92" rx="5" fill="var(--page)"/>
+            <path d="M80 22 v58 M72 70 l8 10 l8 -10" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div class="n">01</div>
+          <div class="t"><b>Warm up.</b> Scroll once so lazy content exists.</div>
+        </div>
+
+        <div class="step" data-tip="The document wins if it scrolls at all. If it does not, the biggest scrollable box on screen is the page, including inside open shadow roots.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Find the scroller">
+            <rect x="16" y="10" width="128" height="84" rx="5" fill="var(--page)"/>
+            <rect x="54" y="18" width="82" height="68" rx="4" fill="none" stroke="var(--accent)" stroke-width="4"/>
+            <circle cx="95" cy="52" r="6" fill="var(--accent)"/>
+          </svg>
+          <div class="n">02</div>
+          <div class="t"><b>Measure.</b> Find what actually scrolls, read its real size.</div>
+        </div>
+
+        <div class="step" data-tip="Tiles land on exact viewport steps. The last tile in each axis is clamped against the end, so it overlaps its neighbour and is later drawn over itself. That is why there is no seam.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Plan the tiles">
+            <rect x="52" y="6" width="56" height="92" rx="5" fill="var(--page)"/>
+            <g fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="5 4">
+              <rect x="54" y="8" width="52" height="28" rx="3"/><rect x="54" y="38" width="52" height="28" rx="3"/>
+              <rect x="54" y="68" width="52" height="28" rx="3"/>
+            </g>
+          </svg>
+          <div class="n">03</div>
+          <div class="t"><b>Plan.</b> Cut it into viewport sized tiles.</div>
+        </div>
+
+        <div class="step" data-tip="Two animation frames for layout and compositing, then a short budget spent only while images in view are still decoding. Pages that are ready are not made to wait.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Capture each tile">
+            <rect x="52" y="6" width="56" height="92" rx="5" fill="var(--page)"/>
+            <rect x="40" y="34" width="80" height="36" rx="5" fill="none" stroke="var(--accent)" stroke-width="4"/>
+            <circle cx="80" cy="52" r="7" fill="var(--accent)"/>
+          </svg>
+          <div class="n">04</div>
+          <div class="t"><b>Shoot.</b> Park, wait for paint, capture.</div>
+        </div>
+
+        <div class="step" data-tip="A fixed toolbar would otherwise be painted into every tile and stripe the result. Backdrops that cover most of the viewport and tall sticky columns are left alone, because hiding those leaves holes.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Hide fixed bars">
+            <rect x="52" y="6" width="56" height="92" rx="5" fill="var(--page)"/>
+            <rect x="44" y="14" width="72" height="14" rx="4" fill="var(--bar)"/>
+            <path d="M44 44 h72 M44 62 h72" stroke="var(--bar)" stroke-width="6" stroke-linecap="round"/>
+            <path d="M38 8 l84 84" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <div class="n">05</div>
+          <div class="t"><b>Strip.</b> Drop fixed bars after tile one.</div>
+        </div>
+
+        <div class="step" data-tip="Each tile is drawn at the scroll offset it was actually taken at, scaled by the device pixel ratio. Retina pages come out at their native resolution rather than at CSS pixels.">
+          <svg viewBox="0 0 160 104" role="img" aria-label="Stitch and save">
+            <rect x="30" y="10" width="40" height="84" rx="4" fill="var(--page)"/>
+            <rect x="90" y="10" width="40" height="84" rx="4" fill="none" stroke="var(--accent)" stroke-width="3"/>
+            <path d="M74 52 h12 M80 46 l8 6 l-8 6" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="n">06</div>
+          <div class="t"><b>Stitch.</b> One canvas, one file, into Downloads.</div>
+        </div>
+
+      </div>
+    </figure>
+    <div class="controls">
+      <button type="button" id="prev">PREV</button>
+      <button type="button" id="play">PLAY</button>
+      <button type="button" id="next">NEXT</button>
+      <span class="count" id="count">01 / 06</span>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------- limits -->
+  <section>
+    <h2>Limits, stated</h2>
+    <p class="say">Every tool has these. Most do not print them.</p>
+    <figure class="scroller">
+      <table class="specs">
+        <tbody>
+          <tr><td data-tip="A hard browser limit on canvas geometry. Beyond it the canvas allocation fails rather than degrading.">Longest side</td><td>16384 px</td></tr>
+          <tr><td data-tip="Past this the output is scaled down and the factor is reported, instead of the capture failing at the last step after two minutes of work. Adjustable up to 260 MP in settings.">Area ceiling</td><td>120 MP, then it scales</td></tr>
+          <tr><td data-tip="Chrome rate limits captureVisibleTab. Rather than pay the documented worst case on every tile, Uncropped starts fast, backs off when the browser complains, and creeps back up when it stops.">Capture interval</td><td>120 to 950 ms, adaptive</td></tr>
+          <tr><td data-tip="An iframe is photographed exactly as it is rendered on screen. Uncropped does not reach inside a cross origin frame to expand it, because the browser does not allow that, and neither does DevTools.">Cross origin iframes</td><td>as rendered</td></tr>
+          <tr><td data-tip="No extension can read chrome://, the Web Store, or another extension's pages. This is the browser refusing, not the extension.">chrome:// pages</td><td>refused by the browser</td></tr>
+        </tbody>
+      </table>
+    </figure>
+  </section>
+
+  <!-- --------------------------------------------------------- permissions -->
+  <section>
+    <h2>What it can reach</h2>
+    <p class="say">No host permissions, no network calls, no analytics. Hover any of these for the reason it is there.</p>
+    <div class="chips">
+      <span class="chip" data-tip="Granted by your click, for that tab, until it navigates. It is what lets the extension run on the page in front of you without asking for every site you will ever visit.">activeTab</span>
+      <span class="chip" data-tip="Injects the page script at the moment you click, rather than on every page you load. Nothing runs until you ask for a screenshot.">scripting</span>
+      <span class="chip" data-tip="Writes the finished PNG to your Downloads folder. It never reads what is already there.">downloads</span>
+      <span class="chip" data-tip="A service worker has no URL.createObjectURL, so the canvas lives in a hidden extension document that does. It loads no page content.">offscreen</span>
+      <span class="chip" data-tip="Holds your seven settings. Nothing about pages, history, or captures is stored anywhere.">storage</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>MIT</span>
+    <span>No dependencies</span>
+    <span>Manifest V3</span>
+    <a href="privacy-policy.html">Privacy policy</a>
+    <a href="https://github.com/john-athan/uncropped">Source</a>
+  </footer>
+
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script src="site.js"></script>
+</body>
+</html>

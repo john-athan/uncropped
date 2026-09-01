@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    width:1280px;height:800px;overflow:hidden;background:#0e1013;
+    background-image:linear-gradient(#ffffff0a 1px,transparent 1px),linear-gradient(90deg,#ffffff0a 1px,transparent 1px);
+    background-size:26px 26px,26px 26px;
+    color:#f0eee9;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    padding:54px 64px;display:flex;flex-direction:column;gap:30px;
+  }
+  h2{font-size:34px;font-weight:600;line-height:1.25}
+  h2 em{font-style:normal;color:#ff6a42}
+  .sub{font-size:14px;color:#8b929c;margin-top:10px}
+  .cols{display:flex;gap:60px;align-items:flex-start;flex:1}
+  .col{flex:1;display:flex;flex-direction:column;gap:14px}
+  .tag{font-size:11px;letter-spacing:.14em;color:#8b929c}
+  .tag b{display:block;color:#f0eee9;font-size:14px;letter-spacing:.02em;margin-top:5px;font-weight:600}
+  .tag.hot b{color:#ff6a42}
+  .stage{height:404px;position:relative;display:flex;align-items:flex-start}
+  .frame{border:1px solid #2a2f37;border-radius:8px;overflow:hidden;background:#fff}
+  .crop{width:100%;height:404px}
+  .crop img{display:block;width:100%}
+  .strip{position:absolute;left:92px;top:0;width:63px;height:404px}
+  .strip img{display:block;width:100%}
+  .ghost{
+    position:absolute;left:86px;top:-6px;width:75px;height:102px;
+    border:2px dashed #ff6a42;border-radius:6px;
+  }
+  .ghost span{position:absolute;left:84px;top:34px;width:150px;font-size:10.5px;letter-spacing:.08em;color:#ff6a42;line-height:1.4}
+  .dim{position:absolute;left:46px;top:0;height:404px;width:26px}
+  .dim i{position:absolute;left:13px;top:0;bottom:0;width:1px;background:#5f666f}
+  .dim i::before,.dim i::after{content:"";position:absolute;left:-4px;width:9px;height:1px;background:#5f666f}
+  .dim i::before{top:0}.dim i::after{bottom:0}
+  .dim span{
+    position:absolute;left:-96px;top:184px;width:96px;text-align:right;padding-right:12px;
+    font-size:10.5px;letter-spacing:.08em;color:#8b929c;line-height:1.5;
+  }
+  .foot{display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.1em;color:#ff6a42}
+  .foot i{display:block;height:1px;flex:1;background:#ff6a42;font-style:normal}
+  .note{font-size:11px;color:#5f666f;letter-spacing:.06em}
+</style></head>
+<body>
+  <div>
+    <h2>The whole page. Not the <em>first screenful</em>.</h2>
+    <div class="sub">Same page, same browser, same number of clicks.</div>
+  </div>
+  <div class="cols">
+    <div class="col">
+      <div class="tag">CHROME DEVTOOLS<b>Capture full size screenshot</b></div>
+      <div class="stage"><div class="frame crop"><img src="sample-capture.png" alt=""></div></div>
+      <div class="foot"><span>560 x 800</span><i></i><span>ONE SCREEN</span></div>
+      <div class="note">Stops where the window stops.</div>
+    </div>
+    <div class="col">
+      <div class="tag hot">UNCROPPED<b>One click</b></div>
+      <div class="stage">
+        <div class="dim"><i></i><span>560 x 3130<br>4 tiles<br>3.9 screens</span></div>
+        <div class="frame strip"><img src="sample-capture.png" alt=""></div>
+        <div class="ghost"><span>WHERE THE OTHER<br>ONE STOPPED</span></div>
+      </div>
+      <div class="foot"><span>560 x 3130</span><i></i><span>ALL OF IT</span></div>
+      <div class="note">Stops where the page stops.</div>
+    </div>
+  </div>
+</body></html>

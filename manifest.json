@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Uncropped",
+  "version": "1.0.0",
+  "description": "Screenshots the whole page. Below the fold, off to the right, and inside the scrolling div your browser calls the whole page.",
+  "permissions": ["activeTab", "scripting", "downloads", "offscreen", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Uncropped: capture the whole page",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y"
+      },
+      "description": "Capture the whole page"
+    }
+  }
+}

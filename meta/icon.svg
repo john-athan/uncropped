@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Uncropped">
+  <title>Uncropped</title>
+  <rect width="128" height="128" rx="28" fill="#16191f"/>
+  <clipPath id="tile"><rect width="128" height="128" rx="28"/></clipPath>
+  <g clip-path="url(#tile)">
+    <rect x="36" y="-14" width="56" height="156" rx="7" fill="#f5f3ee"/>
+    <g fill="#cbc6bb">
+      <rect x="46" y="27" width="36" height="5" rx="2.5"/>
+      <rect x="46" y="39" width="36" height="5" rx="2.5"/>
+      <rect x="46" y="51" width="24" height="5" rx="2.5"/>
+      <rect x="46" y="77" width="36" height="5" rx="2.5"/>
+      <rect x="46" y="89" width="36" height="5" rx="2.5"/>
+      <rect x="46" y="101" width="24" height="5" rx="2.5"/>
+      <rect x="46" y="113" width="30" height="5" rx="2.5"/>
+    </g>
+    <rect x="23" y="18" width="82" height="45" rx="9" fill="none" stroke="#ff6a42" stroke-width="7"/>
+  </g>
+</svg>

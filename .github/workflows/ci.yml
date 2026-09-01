@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+
+      - name: manifest.json is well-formed and consistent
+        run: |
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
+            const fail = (msg) => { console.error("FAIL: " + msg); process.exitCode = 1; };
+            if (m.manifest_version !== 3) fail("not manifest v3");
+            if (m.description.length > 132) fail("description is " + m.description.length + " chars, the store caps it at 132");
+            for (const f of [m.background.service_worker, m.options_ui.page, ...Object.values(m.icons)]) {
+              if (!fs.existsSync(f)) fail("manifest points at a missing file: " + f);
+            }
+            for (const f of ["content.js", "offscreen.html", "offscreen.js", "options.js"]) {
+              if (!fs.existsSync(f)) fail("missing source file: " + f);
+            }
+            if (m.host_permissions) fail("host_permissions crept back in");
+            console.log("manifest ok, version " + m.version);
+          '
+
+      - name: JavaScript parses
+        run: |
+          for f in background.js content.js offscreen.js options.js docs/site.js; do
+            node --check "$f" && echo "ok $f"
+          done
+
+      - name: Inline SVG is well-formed
+        run: |
+          python3 - <<'PY'
+          import re, sys, glob, xml.etree.ElementTree as ET
+          bad = 0
+          for path in glob.glob('docs/*.html') + glob.glob('meta/*.html') + glob.glob('meta/*.svg'):
+              src = open(path, encoding='utf-8').read()
+              for i, svg in enumerate(re.findall(r'<svg\b.*?</svg>', src, re.S)):
+                  try:
+                      ET.fromstring(svg)
+                  except Exception as e:
+                      bad += 1
+                      print(f'FAIL {path} svg#{i+1}: {e}')
+          print('broken SVG blocks:', bad)
+          sys.exit(1 if bad else 0)
+          PY
+
+      - name: The extension carries no dependencies
+        run: |
+          if ls package.json package-lock.json yarn.lock node_modules 2>/dev/null | grep -q .; then
+            echo "FAIL: a dependency appeared in a project that is supposed to have none"
+            exit 1
+          fi
+          echo "ok, still no dependencies"
+
+      - name: Package a loadable zip
+        run: |
+          zip -r uncropped.zip manifest.json background.js content.js \
+            offscreen.html offscreen.js options.html options.js icons \
+            LICENSE > /dev/null
+          unzip -l uncropped.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uncropped-unpacked
+          path: uncropped.zip

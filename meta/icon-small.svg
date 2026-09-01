@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Uncropped">
+  <title>Uncropped</title>
+  <rect width="128" height="128" rx="28" fill="#16191f"/>
+  <clipPath id="tileS"><rect width="128" height="128" rx="28"/></clipPath>
+  <g clip-path="url(#tileS)">
+    <rect x="45" y="-14" width="38" height="156" rx="6" fill="#ffffff"/>
+    <rect x="16" y="27" width="96" height="46" rx="12" fill="none" stroke="#ff6a42" stroke-width="10"/>
+  </g>
+</svg>

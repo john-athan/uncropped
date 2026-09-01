@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:440px; height:280px; overflow:hidden;
+    background:#0e1013;
+    background-image:
+      linear-gradient(#ffffff0d 1px, transparent 1px),
+      linear-gradient(90deg, #ffffff0d 1px, transparent 1px);
+    background-size:20px 20px, 20px 20px;
+    color:#f0eee9;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; text-align:center;
+  }
+  .mark { width:74px; height:74px; }
+  h1 { font-size:34px; letter-spacing:.22em; font-weight:600; text-indent:.22em; }
+  .rule { width:150px; height:2px; background:#ff6a42; }
+  p { font-size:12.5px; line-height:1.5; color:#a7adb8; letter-spacing:.02em; }
+  b { color:#ff6a42; font-weight:600; }
+</style></head>
+<body>
+  <svg class="mark" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+        <rect width="128" height="128" rx="28" fill="#1c1f26"/>
+        <clipPath id="cm"><rect width="128" height="128" rx="28"/></clipPath>
+        <g clip-path="url(#cm)">
+          <rect x="36" y="-14" width="56" height="156" rx="7" fill="#f5f3ee"/>
+          <g fill="#cbc6bb">
+            <rect x="46" y="27" width="36" height="5" rx="2.5"/>
+            <rect x="46" y="39" width="36" height="5" rx="2.5"/>
+            <rect x="46" y="51" width="24" height="5" rx="2.5"/>
+            <rect x="46" y="77" width="36" height="5" rx="2.5"/>
+            <rect x="46" y="89" width="36" height="5" rx="2.5"/>
+            <rect x="46" y="101" width="24" height="5" rx="2.5"/>
+            <rect x="46" y="113" width="30" height="5" rx="2.5"/>
+          </g>
+          <rect x="23" y="18" width="82" height="45" rx="9" fill="none" stroke="#ff6a42" stroke-width="7"/>
+        </g>
+      </svg>
+  <h1>UNCROPPED</h1>
+  <div class="rule"></div>
+  <p>Full size. The load bearing word is <b>full</b>.</p>
+</body></html>

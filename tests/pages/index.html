@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uncropped: test pages</title>
+<style>
+  :root{--paper:#f3f1ec;--card:#fff;--ink:#14171c;--mute:#666c76;--rule:#dbd7ce;--accent:#d1492a;
+        --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @media (prefers-color-scheme:dark){:root{--paper:#0e1013;--card:#161a20;--ink:#e9e7e2;--mute:#8b929c;--rule:#2a2f37;--accent:#ff6a42}}
+  body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+  .wrap{max-width:620px;margin:0 auto;padding:48px 24px}
+  h1{font:600 15px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;margin:0 0 6px}
+  p.sub{color:var(--mute);margin:0 0 32px}
+  a.case{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--rule);
+         border-radius:10px;padding:16px 18px;margin-bottom:12px}
+  a.case:hover{border-color:var(--accent)}
+  a.case b{display:block;font:12.5px var(--mono);letter-spacing:.08em;color:var(--accent);margin-bottom:5px}
+  a.case span{color:var(--mute);font-size:13.5px}
+  .want{margin-top:6px;font:11.5px var(--mono);color:var(--ink)}
+</style></head>
+<body><div class="wrap">
+  <h1>Uncropped: test pages</h1>
+  <p class="sub">Three page shapes. Capture each one and check the stated result.</p>
+
+  <a class="case" href="article.html">
+    <b>01 &nbsp; PLAIN ARTICLE</b>
+    <span>The document scrolls, the way a blog does. Sticky header, lazy images below the fold.</span>
+    <div class="want">Expect: tall image, header once at the top, no blank image boxes.</div>
+  </a>
+
+  <a class="case" href="app-shell.html">
+    <b>02 &nbsp; APP SHELL</b>
+    <span>html and body are one viewport tall. A div does the scrolling. This is the case DevTools gets wrong.</span>
+    <div class="want">Expect: tall image of the panel only, no sidebar repeated down the side.</div>
+  </a>
+
+  <a class="case" href="wide-table.html">
+    <b>03 &nbsp; WIDE TABLE</b>
+    <span>Wider than the window and taller than it, so the capture has to tile on both axes.</span>
+    <div class="want">Expect: one wide, tall image, no seam between columns.</div>
+  </a>
+</div></body></html>
