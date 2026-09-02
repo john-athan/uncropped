@@ -176,21 +176,31 @@ Done, and re-checkable:
 - [x] Artwork present at the sizes the console demands: 128 icon, three
       1280 x 800 screenshots, 440 x 280 and 1400 x 560 promo tiles.
 
-Needs a person:
+- [x] Developer account registered and the one time fee paid. Confirmed
+      2026-09-02: Carrier Pigeon is live on the store under this account, which
+      the console does not allow without a paid registration and a verified
+      publisher contact email.
+- [x] Capture all three shapes in `tests/pages/` with the packaged build. Done
+      2026-09-02 against the contents of `uncropped-1.0.0.zip`, loaded unpacked
+      into a clean profile, driven by the real Cmd+Shift+Y command so that
+      activeTab was granted the way it is for a user. Results:
 
-- [ ] Register the developer account and pay the one time USD 5 fee.
-- [ ] Set a developer contact email and verify it from the email Google sends.
-      This is mandatory and the console blocks publishing without it.
-- [ ] Unzip `uncropped-1.0.0.zip` into a scratch folder, load *that* unpacked,
-      and capture each of the three shapes in `tests/pages/`: a plain article,
-      an app shell whose document does not scroll, and a page with a wide
-      table. The zip is what a reviewer installs, so it is what should be
-      tried.
-- [ ] Replace the store screenshots with captures from the shipped build if the
-      output or the options page changed since they were rendered.
-- [ ] Tag `v1.0.0`, which runs the provenance workflow again against the
-      release, and `publish.yml`, which stays inert until the four Chrome Web
-      Store secrets exist.
+      | Page | Output | Checked |
+      |---|---|---|
+      | `article.html` | 1648 x 16384, 17 tiles, scaled to 65% | Sticky header once at the top, sections 01, 02, 03 in order, lazy image boxes filled |
+      | `app-shell.html` | 2036 x 8422, 6 tiles, scroller `div.panel` | Panel only, no sidebar down the side |
+      | `wide-table.html` | 2654 x 3996, 6 tiles | Rows 19 to 28 and columns 14 to 20 continuous across both seams |
+
+      The article page is tall enough to hit the 16384 px side limit, so that
+      run also exercised the downscale path and reported the factor.
+- [x] Store screenshots still match the shipped build. The options page and the
+      capture output did not change, so `tools/render-assets.sh` output stands.
+
+Needs a person, because it needs a logged in Google account:
+
+- [ ] Create the item in the console and upload `uncropped-1.0.0.zip`.
+- [ ] Paste the fields above into the listing and the privacy practices tab.
+- [ ] Submit for review.
 - [ ] After the item exists, put the store URL in the README's Install section
       and in the repository's website field, and set up the four secrets so
       the next version publishes from a tag.
