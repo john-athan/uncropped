@@ -3,6 +3,8 @@
   "name": "Uncropped",
   "version": "1.0.0",
   "description": "Screenshots the whole page. Below the fold, off to the right, and inside the scrolling div your browser calls the whole page.",
+  "homepage_url": "https://github.com/john-athan/uncropped",
+  "minimum_chrome_version": "116",
   "permissions": ["activeTab", "scripting", "downloads", "offscreen", "storage"],
   "background": {
     "service_worker": "background.js"

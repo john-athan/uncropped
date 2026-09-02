@@ -38,6 +38,9 @@ function init({ width, height, dpr: ratio, maxMegapixels }) {
 
 async function draw({ dataUrl, dx, dy, crop }) {
   if (!ctx) throw new Error('no canvas: INIT first');
+  // The only fetch in the extension, and it reaches no network: captureVisibleTab
+  // hands back a data: URL, and fetch is the documented way to decode one into a
+  // Blob. scripts/check-package.mjs allows this exact shape and nothing wider.
   const blob = await (await fetch(dataUrl)).blob();
   const bmp = await createImageBitmap(blob);
   try {

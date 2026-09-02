@@ -3,7 +3,7 @@
 All notable changes to Uncropped. The format follows Keep a Changelog, and the
 versions follow Semantic Versioning.
 
-## [1.0.0] - unreleased
+## [1.0.0] - 2026-09-02
 
 First release.
 
@@ -21,3 +21,7 @@ First release.
 - Options page: format, JPEG quality, warm up pass, hide fixed bars, settle
   budget, size ceiling, ask where to save.
 - Keyboard shortcut, Cmd or Ctrl + Shift + Y.
+- Minimum Chrome version 116, which is where `chrome.offscreen.hasDocument`
+  arrives and therefore the oldest browser this can run on.
+
+[1.0.0]: https://github.com/john-athan/uncropped/releases/tag/v1.0.0

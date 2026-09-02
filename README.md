@@ -15,7 +15,7 @@ capture: correct, and useless. Uncropped is that button, but it means it.
 
 ## Install
 
-Not on the Chrome Web Store yet. Load it from source:
+Not on the Chrome Web Store yet. Load it from source, on Chrome 116 or newer:
 
 1. `git clone https://github.com/john-athan/uncropped`
 2. Open `chrome://extensions`, turn on **Developer mode**
@@ -93,14 +93,22 @@ platform so that somebody can take a picture. Not worth it.
 **A bundled stitcher.** There is no dependency in this repo and there is not
 going to be one. Everything here is the platform.
 
-## Building the assets
+## Building it
 
-Every binary in the repo is generated from a source in `meta/`:
+Every binary in the repo is generated from a source in `meta/`, and the store
+upload is generated from the tracked files:
 
 ```sh
+tools/package.sh                # the store zip, then check it against the store
 tools/render-assets.sh          # icons, promo tiles, store screenshots
 tools/render-assets.sh icons    # just icons/
 ```
+
+`package.sh` ships the extension and nothing else, then hands the zip to
+`scripts/check-package.mjs`, which refuses a package that exceeds a store field
+limit, names a file it did not pack, carries anything but the extension, or
+contains an `eval`, a network call or an HTML injection that the listing says
+it does not. Submission itself is a runbook: [meta/PUBLISHING.md](meta/PUBLISHING.md).
 
 The renderer is Chrome itself, which is already installed, already colour
 manages the way the store will, and keeps an image library out of the
@@ -131,6 +139,13 @@ scripts/provenance-check.py --all     # every tracked source file
 Asks GitHub code search whether the distinctive lines in this repo also live in
 somebody else's, and looks at the license of what comes back. See
 [THIRD_PARTY.md](THIRD_PARTY.md).
+
+## Contributing, and reporting a hole
+
+[CONTRIBUTING.md](CONTRIBUTING.md) says how to run it, what to capture before
+opening a pull request, and the three constraints a change should not break.
+[SECURITY.md](SECURITY.md) says what counts as a security bug here and where to
+send one privately.
 
 ## License
 

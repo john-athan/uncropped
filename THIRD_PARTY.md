@@ -86,5 +86,16 @@ which occurs in Chrome's message, and `rate` risked classifying an unrelated
 failure as a quota error and retrying it six times. It now matches only the two
 tokens that actually appear.
 
+**2026-09-02. Re-run before submission. Eleven matches, same probe, cleared.**
+
+The same probe now returns eleven repositories rather than nine. The two new
+ones (`Tyris77/pagepilot-capture`, `NSP-MO/Full-Page-Screenshoot`) are new
+repositories carrying Chrome's own error token, and the reasoning above covers
+them unchanged. The MPL-2.0 match is the same file, still the only one the gate
+would block on, and still already recorded. The count drifting upward between
+runs is the expected behaviour of a code search over a growing corpus, not
+evidence of anything: the probe asks which repositories contain two rare
+identifiers, not which contain this line.
+
 Findings that turn out to be convergent output rather than copying belong here,
 with the date and the reasoning.

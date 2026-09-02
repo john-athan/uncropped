@@ -12,9 +12,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: '20'
 
@@ -67,14 +67,25 @@ jobs:
           fi
           echo "ok, still no dependencies"
 
-      - name: Package a loadable zip
+      - name: The version is the same number everywhere
         run: |
-          zip -r uncropped.zip manifest.json background.js content.js \
-            offscreen.html offscreen.js options.html options.js icons \
-            LICENSE > /dev/null
-          unzip -l uncropped.zip
+          node -e '
+            const fs = require("fs");
+            const version = JSON.parse(fs.readFileSync("manifest.json", "utf8")).version;
+            const fail = (msg) => { console.error("FAIL: " + msg); process.exitCode = 1; };
+            const inPage = fs.readFileSync("content.js", "utf8").match(/VERSION\s*=\s*.([^\x27"]+)./);
+            if (!inPage) fail("content.js no longer declares a VERSION");
+            else if (inPage[1] !== version) fail(`content.js says ${inPage[1]}, manifest says ${version}`);
+            if (!fs.readFileSync("CHANGELOG.md", "utf8").includes(`## [${version}]`)) {
+              fail(`CHANGELOG.md has no entry for ${version}`);
+            }
+            console.log("version " + version + " agrees everywhere");
+          '
 
-      - uses: actions/upload-artifact@v4
+      - name: Package the store upload, and check it against the store
+        run: tools/package.sh
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: uncropped-unpacked
-          path: uncropped.zip
+          path: uncropped-*.zip
