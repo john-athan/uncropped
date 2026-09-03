@@ -23,6 +23,28 @@ checklist at the bottom before you press publish.
 
     English
 
+## Homepage URL
+
+Under "Additional fields" on the Store listing tab.
+
+    https://john-athan.github.io/uncropped/
+
+The landing page, not the repository, because it is the page written for
+somebody who has just met the extension. It links to the source, and it is the
+same site that serves the privacy policy the console asks for further down.
+
+`homepage_url` in the manifest is the same URL, so the "Website" link that
+Chrome shows on chrome://extensions and the homepage on the listing go to one
+place. Change one and change the other.
+
+## Support URL
+
+    https://github.com/john-athan/uncropped/issues
+
+## Mature content
+
+    No
+
 ---
 
 ## Detailed description
