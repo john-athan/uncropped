@@ -67,6 +67,73 @@ jobs:
           fi
           echo "ok, still no dependencies"
 
+      - name: Store artwork is the size and shape the console demands
+        run: |
+          python3 - <<'PY'
+          import struct, sys, zlib
+          def png(path):
+              d = open(path, 'rb').read()
+              w, h = struct.unpack('>II', d[16:24])
+              return w, h, d[24], d[25]
+          fail = []
+          for path, want in [
+              ('screenshots/store-icon.png', (128, 128)),
+              ('screenshots/store-1.png', (1280, 800)),
+              ('screenshots/store-2.png', (1280, 800)),
+              ('screenshots/store-3.png', (1280, 800)),
+              ('screenshots/store-promo-small.png', (440, 280)),
+              ('screenshots/store-promo-marquee.png', (1400, 560)),
+              ('icons/icon128.png', (128, 128)),
+          ]:
+              w, h, depth, ctype = png(path)
+              if (w, h) != want:
+                  fail.append(f'{path} is {w}x{h}, the store wants {want[0]}x{want[1]}')
+              print(f'ok {path} {w}x{h}')
+          # The store icon carries 96px of artwork inside a 128px frame. The
+          # console rounds and shadows the outer margin, so a full bleed icon
+          # dropped in here gets clipped. Corners transparent, middle not.
+          d = open('screenshots/store-icon.png', 'rb').read()
+          idat = b''
+          off = 8
+          while off < len(d):
+              ln = struct.unpack('>I', d[off:off+4])[0]
+              if d[off+4:off+8] == b'IDAT': idat += d[off+8:off+8+ln]
+              off += 12 + ln
+          raw = zlib.decompress(idat)
+          stride = 128 * 4
+          if len(raw) != (stride + 1) * 128:
+              print('unexpected store-icon encoding, skipping the margin check')
+          else:
+              rows = [bytearray(raw[y*(stride+1)+1:(y+1)*(stride+1)]) for y in range(128)]
+              prev = bytearray(stride)
+              for y, line in enumerate(rows):
+                  f = raw[y*(stride+1)]
+                  for x in range(stride):
+                      a = line[x-4] if x >= 4 else 0
+                      b = prev[x]
+                      c = prev[x-4] if x >= 4 else 0
+                      v = line[x]
+                      if f == 1: v += a
+                      elif f == 2: v += b
+                      elif f == 3: v += (a + b) // 2
+                      elif f == 4:
+                          p = a + b - c
+                          pa, pb, pc = abs(p-a), abs(p-b), abs(p-c)
+                          v += a if (pa <= pb and pa <= pc) else (b if pb <= pc else c)
+                      line[x] = v & 255
+                  prev = line
+              alpha = lambda x, y: rows[y][x*4+3]
+              for x, y in [(2, 2), (125, 2), (2, 125), (125, 125), (8, 64), (119, 64)]:
+                  if alpha(x, y) > 8:
+                      fail.append(f'store-icon.png has artwork at ({x},{y}); the outer 16px must stay transparent')
+              if alpha(64, 64) < 200:
+                  fail.append('store-icon.png is transparent in the middle')
+              if not fail:
+                  print('ok store-icon.png keeps its 16px transparent margin')
+          if fail:
+              print('\nFAIL:\n  ' + '\n  '.join(fail)); sys.exit(1)
+          PY
+
       - name: The version is the same number everywhere
         run: |
           node -e '

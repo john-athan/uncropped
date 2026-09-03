@@ -64,12 +64,17 @@ Copy and answers: [store-listing.md](store-listing.md). Artwork:
 
 | Field in the console | File | Size |
 |---|---|---|
-| Store icon | `icons/icon128.png` | 128 x 128 |
+| Store icon | `screenshots/store-icon.png` | 128 x 128, 96 px of artwork, 16 px transparent margin |
 | Screenshots, up to 5 | `screenshots/store-1.png`, `store-2.png`, `store-3.png` | 1280 x 800 |
 | Small promo tile | `screenshots/store-promo-small.png` | 440 x 280 |
 | Marquee promo tile | `screenshots/store-promo-marquee.png` | 1400 x 560 |
 
 Category **Developer Tools**, language **English**.
+
+Do not put `icons/icon128.png` in the store icon field. It is the toolbar icon
+and fills its frame; the console rounds and shadows the outer 16 px of a store
+icon, which would clip the artwork. `tools/render-assets.sh store-icon` renders
+the padded one, and CI fails if that margin goes away.
 
 ## The privacy practices tab
 

@@ -8,6 +8,7 @@
 #   tools/render-assets.sh            # everything
 #   tools/render-assets.sh icons      # just icons/
 #   tools/render-assets.sh promo      # just the store tiles
+#   tools/render-assets.sh store-icon # just the padded 128 store icon
 set -euo pipefail
 
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
@@ -33,14 +34,17 @@ shoot() { # shoot <html> <out.png> <w> <h> [--opaque]
   [ -s "$out" ] || { echo "render failed: $out" >&2; exit 1; }
 }
 
-wrap() { # wrap <svg> <size> -> path to an html file that paints it at that size
+wrap() { # wrap <svg> <size> [inset] -> html that paints it at that size
   local svg="$1"
   local size="$2"
+  local inset="${3:-0}"
+  local art=$((size - 2 * inset))
   local out
-  out="$WORK/wrap-$size-$(basename "$svg" .svg).html"
+  out="$WORK/wrap-$size-$inset-$(basename "$svg" .svg).html"
   {
     printf '<meta charset="utf-8"><style>html,body{margin:0;padding:0;background:transparent}'
-    printf 'svg{display:block;width:%spx;height:%spx}</style>' "$size" "$size"
+    printf 'body{width:%spx;height:%spx;display:grid;place-items:center}' "$size" "$size"
+    printf 'svg{display:block;width:%spx;height:%spx}</style>' "$art" "$art"
     cat "$svg"
   } > "$out"
   echo "$out"
@@ -56,6 +60,17 @@ do_icons() {
     shoot "$(wrap "$ROOT/meta/icon.svg" "$size")" "$ROOT/icons/icon$size.png" "$size" "$size"
   done
   echo "icons: $(cd "$ROOT/icons" && echo *.png)"
+}
+
+do_store_icon() {
+  mkdir -p "$ROOT/screenshots"
+  # The store icon is not the toolbar icon. Google's image guidelines put 96 px
+  # of artwork in the middle of a 128 px frame and keep the remaining 16 px on
+  # each side transparent, because the console draws its own shadow and rounding
+  # in that margin. Shipping the full bleed icons/icon128.png here gets the
+  # artwork clipped by that treatment.
+  shoot "$(wrap "$ROOT/meta/icon.svg" 128 16)" "$ROOT/screenshots/store-icon.png" 128 128
+  echo "store icon: store-icon.png"
 }
 
 do_promo() {
@@ -76,8 +91,9 @@ do_shots() {
 
 case "${1:-all}" in
   icons) do_icons ;;
+  store-icon) do_store_icon ;;
   promo) do_promo ;;
   shots) do_shots ;;
-  all) do_icons; do_promo; do_shots ;;
-  *) echo "usage: $0 [all|icons|promo|shots]" >&2; exit 2 ;;
+  all) do_icons; do_store_icon; do_promo; do_shots ;;
+  *) echo "usage: $0 [all|icons|store-icon|promo|shots]" >&2; exit 2 ;;
 esac
