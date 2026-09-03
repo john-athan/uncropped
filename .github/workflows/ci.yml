@@ -134,6 +134,26 @@ jobs:
               print('\nFAIL:\n  ' + '\n  '.join(fail)); sys.exit(1)
           PY
 
+      - name: Every permission has a justification written for the console
+        run: |
+          node -e '
+            const fs = require("fs");
+            const declared = JSON.parse(fs.readFileSync("manifest.json", "utf8")).permissions || [];
+            const listing = fs.readFileSync("meta/store-listing.md", "utf8");
+            const section = listing.split("## Permission justifications")[1] || "";
+            const written = [...section.matchAll(/^\*\*([a-zA-Z]+)\*\*$/gm)].map((m) => m[1]);
+            const fail = (msg) => { console.error("FAIL: " + msg); process.exitCode = 1; };
+            for (const p of declared) {
+              if (!written.includes(p)) fail(`manifest declares ${p}, store-listing.md does not justify it`);
+            }
+            for (const w of written) {
+              if (w !== "Remote" && !declared.includes(w)) {
+                fail(`store-listing.md justifies ${w}, which the manifest does not declare`);
+              }
+            }
+            console.log("justified: " + declared.join(", "));
+          '
+
       - name: The version is the same number everywhere
         run: |
           node -e '

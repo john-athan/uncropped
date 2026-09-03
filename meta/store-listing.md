@@ -106,7 +106,12 @@ user is not capturing.
 
 ## Permission justifications
 
-Paste each of these into the matching field in the dashboard.
+One per permission in the manifest, and the console asks for every one of them.
+Paste each into the matching field in the dashboard. CI fails if this list and
+the manifest stop agreeing.
+
+There is no host permission field to fill in. The console only shows it for an
+item that requests host permissions, and this one requests none.
 
 **activeTab**
 The extension needs to read and scroll the page the user is currently looking at
@@ -131,8 +136,14 @@ worker provides OffscreenCanvas but not URL.createObjectURL, and the downloads
 API requires a URL, so the finished image cannot be produced in the worker
 itself. The offscreen document loads no page content and makes no requests.
 
-**Host permissions**
-None are requested.
+**storage**
+Used only to keep the user's own settings from the options page, and nothing
+else. There are seven of them: image format, JPEG quality, whether to run the
+warm up pass, whether to hide fixed bars after the first tile, the settle
+budget in milliseconds, the size ceiling in megapixels, and whether to ask
+where to save. They are held in chrome.storage.sync so they follow the user's
+Chrome profile between machines. No page content, no capture history, no
+counters and no identifiers are stored, and nothing is transmitted anywhere.
 
 **Remote code**
 None. The extension bundles no libraries and loads no script, style, or font
