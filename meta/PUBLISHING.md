@@ -122,5 +122,7 @@ oss provenance uncropped                 # while the answer can still change the
 git tag v1.0.0 && git push origin v1.0.0
 ```
 
-The tag runs `provenance.yml` again against the release, and `publish.yml`,
-which does nothing until the four secrets exist.
+The tag runs `publish.yml`, which does nothing until the four secrets exist.
+The provenance gate no longer runs in CI. It runs from the fleet tool, above
+before the tag and monthly across every project, so a forgotten run still gets
+an answer.
