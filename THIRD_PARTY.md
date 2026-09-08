@@ -17,9 +17,10 @@ directly. What is in the repo is what is shipped.
 machine to rasterise `meta/*.svg` and `meta/*.html`. Chrome is not vendored,
 redistributed, or modified, and none of its code is in this repo.
 
-`scripts/provenance-check.py` was written for the `carrier-pigeon` project by
-the same author and is reused here under the same MIT license. It needs `gh` and
-`git`, both of which the developer supplies.
+The provenance check, run as `oss provenance uncropped`, was originally written
+for the `carrier-pigeon` project by the same author. It now lives in the
+`oss-kit` fleet tool and is reused across repositories under the same MIT
+license. It needs `gh` and `git`, both of which the developer supplies.
 
 ## Icons, screenshots and copy
 

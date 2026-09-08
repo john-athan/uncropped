@@ -10,7 +10,7 @@ injected fresh on every capture, so no tab reload is needed.
 ```sh
 tools/package.sh                # the store zip, validated
 tools/render-assets.sh          # icons, promo tiles, store screenshots
-scripts/provenance-check.py     # where new code came from
+oss provenance uncropped        # where new code came from
 ```
 
 ## Testing a change
@@ -53,7 +53,7 @@ an argument rather than a patch:
 node --check background.js && node --check content.js \
   && node --check offscreen.js && node --check options.js
 tools/package.sh
-scripts/provenance-check.py
+oss provenance uncropped
 ```
 
 If the change borrowed an idea, an algorithm or a block of code from

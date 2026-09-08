@@ -118,7 +118,7 @@ Store yet" to the store URL, and set the repository's website field to it.
 ## Releasing
 
 ```sh
-./scripts/provenance-check.py            # while the answer can still change the release
+oss provenance uncropped                 # while the answer can still change the release
 git tag v1.0.0 && git push origin v1.0.0
 ```
 

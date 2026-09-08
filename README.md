@@ -15,7 +15,7 @@ capture: correct, and useless. Uncropped is that button, but it means it.
 
 ## Install
 
-Not on the Chrome Web Store yet. Load it from source, on Chrome 116 or newer:
+Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/jbmldbdipagojpopeadahbnbeidiiiej). Or load it from source, on Chrome 116 or newer:
 
 1. `git clone https://github.com/john-athan/uncropped`
 2. Open `chrome://extensions`, turn on **Developer mode**

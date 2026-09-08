@@ -238,9 +238,14 @@ Done, and re-checkable:
 
 Needs a person, because it needs a logged in Google account:
 
-- [ ] Create the item in the console and upload `uncropped-1.0.0.zip`.
-- [ ] Paste the fields above into the listing and the privacy practices tab.
-- [ ] Submit for review.
+- [x] Create the item in the console and upload `uncropped-1.0.0.zip`. Confirmed
+      2026-09-08: the listing is live at
+      https://chromewebstore.google.com/detail/jbmldbdipagojpopeadahbnbeidiiiej.
+- [x] Paste the fields above into the listing and the privacy practices tab.
+      The console does not publish an item until that tab is complete, and the
+      listing above is live.
+- [x] Submit for review. The listing above is live, which the console does not
+      allow before a review passes.
 - [ ] After the item exists, put the store URL in the README's Install section
       and in the repository's website field, and set up the four secrets so
       the next version publishes from a tag.

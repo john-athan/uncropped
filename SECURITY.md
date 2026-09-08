@@ -47,5 +47,5 @@ extension, and reports along it are always welcome, in particular:
 
 There is no build step and no dependency, so the source in this repository is
 what runs in the browser. `tools/package.sh` produces the uploaded zip from
-those files and validates it, and `scripts/provenance-check.py` records where
+those files and validates it, and `oss provenance uncropped` records where
 the code came from.
