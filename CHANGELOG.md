@@ -3,6 +3,17 @@
 All notable changes to Uncropped. The format follows Keep a Changelog, and the
 versions follow Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+- CI's six checks moved out of the workflow file and into `tools/validate.sh`,
+  runnable directly, through `oss check uncropped`, or from CI.
+- The provenance gate moved to oss-kit, one shared copy that runs before a
+  release is tagged instead of a script duplicated in this repo.
+- `meta/store-listing.md` now justifies `storage`, the permission the listing
+  had missed, and drops the "Host permissions: none" line the console never
+  shows for an item that requests none.
+
 ## [1.0.0] - 2026-09-02
 
 First release.

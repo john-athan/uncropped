@@ -131,14 +131,10 @@ re-running after any change to the scroller search.
 
 ## Provenance
 
-```sh
-scripts/provenance-check.py           # changes since the last tag
-scripts/provenance-check.py --all     # every tracked source file
-```
-
-Asks GitHub code search whether the distinctive lines in this repo also live in
-somebody else's, and looks at the license of what comes back. See
-[THIRD_PARTY.md](THIRD_PARTY.md).
+The check for whether new code also lives in somebody else's repository is not
+a script in this tree. It was identical across seven repositories, so it now
+runs once from oss-kit, before a release is tagged rather than after. See
+[THIRD_PARTY.md](THIRD_PARTY.md) for what past runs found.
 
 ## Contributing, and reporting a hole
 

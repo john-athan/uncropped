@@ -129,7 +129,9 @@ node -e '
   const fs = require("fs");
   const declared = JSON.parse(fs.readFileSync("manifest.json", "utf8")).permissions || [];
   const listing = fs.readFileSync("meta/store-listing.md", "utf8");
-  const section = listing.split("## Permission justifications")[1] || "";
+  // Bounded to the next heading, or a stray bold word anywhere later in the
+  // file (Assets, the publishing checklist) would read as a permission.
+  const section = (listing.split("## Permission justifications")[1] || "").split(/\n## /)[0];
   const written = [...section.matchAll(/^\*\*([a-zA-Z]+)\*\*$/gm)].map((m) => m[1]);
   const fail = (msg) => { console.error("FAIL: " + msg); process.exitCode = 1; };
   for (const p of declared) {
