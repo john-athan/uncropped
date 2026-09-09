@@ -12,7 +12,7 @@ OUT="uncropped-$VERSION.zip"
 rm -f uncropped-*.zip
 zip -rq "$OUT" \
   manifest.json \
-  background.js content.js offscreen.html offscreen.js options.html options.js \
+  background.js content.js geometry.js offscreen.html offscreen.js options.html options.js \
   icons \
   LICENSE \
   -x '*.DS_Store'

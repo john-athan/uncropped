@@ -154,7 +154,7 @@ async function run(tab) {
 
   try {
     flag('...', '#2b6cb0');
-    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content.js'] });
+    await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['geometry.js', 'content.js'] });
 
     const plan = await ask(tab.id, {
       type: 'PREPARE',

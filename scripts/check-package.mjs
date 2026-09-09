@@ -52,15 +52,33 @@ function walk(value) {
 }
 walk(manifest);
 
-// content.js is loaded by chrome.scripting rather than named in the manifest,
-// so the walk above cannot see it. Miss it and the extension ships inert.
-for (const required of ['content.js', 'offscreen.html', 'offscreen.js', 'options.html', 'options.js']) {
+// Some files are named nowhere in the manifest: content.js and geometry.js are
+// handed to chrome.scripting, and offscreen.html pulls its own scripts. The walk
+// above cannot see any of that, and a file missed here ships an extension that
+// installs cleanly and then does nothing. geometry.js was added and left out of
+// this zip on the same afternoon, which is exactly how that goes.
+//
+// So rather than a list to keep in step by hand, the two places that name a file
+// outside the manifest are read for what they actually name.
+const injected = [
+  ...readFileSync('background.js', 'utf8').matchAll(/files:\s*\[([^\]]*)\]/g),
+].flatMap((m) => [...m[1].matchAll(/['"]([^'"]+)['"]/g)].map((f) => f[1]));
+
+const fromHtml = listing
+  .filter((n) => n.endsWith('.html'))
+  .flatMap((n) => [...readFileSync(n, 'utf8').matchAll(/<script[^>]+src=["']([^"']+)["']/g)]
+    .map((m) => m[1]));
+
+for (const required of new Set([
+  ...injected, ...fromHtml,
+  'content.js', 'offscreen.html', 'offscreen.js', 'options.html', 'options.js',
+])) {
   if (!listing.includes(required)) problems.push(`missing from the package: ${required}`);
 }
 
 // Nothing that is not the extension. A stray test or dotfile is not a
 // rejection, but it is a bigger review surface and a wider licence question.
-const allowed = /^(manifest\.json|LICENSE|icons\/icon(16|32|48|128)\.png|(background|content|offscreen|options)\.(js|html))$/;
+const allowed = /^(manifest\.json|LICENSE|icons\/icon(16|32|48|128)\.png|(background|content|geometry|offscreen|options)\.(js|html))$/;
 for (const name of listing) {
   if (!allowed.test(name)) problems.push(`unexpected file in the package: ${name}`);
   if (/(^|\/)\./.test(name)) problems.push(`hidden file in the package: ${name}`);

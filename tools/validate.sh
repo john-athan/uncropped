@@ -22,7 +22,7 @@ node -e '
   for (const f of [m.background.service_worker, m.options_ui.page, ...Object.values(m.icons)]) {
     if (!fs.existsSync(f)) fail("manifest points at a missing file: " + f);
   }
-  for (const f of ["content.js", "offscreen.html", "offscreen.js", "options.js"]) {
+  for (const f of ["content.js", "geometry.js", "offscreen.html", "offscreen.js", "options.js"]) {
     if (!fs.existsSync(f)) fail("missing source file: " + f);
   }
   if (m.host_permissions) fail("host_permissions crept back in");
@@ -30,7 +30,7 @@ node -e '
 ' || fail_if $?
 
 step "JavaScript parses"
-for f in background.js content.js offscreen.js options.js docs/site.js; do
+for f in background.js content.js geometry.js offscreen.js options.js test.js docs/site.js; do
   node --check "$f" && echo "ok $f" || fail_if $?
 done
 
@@ -49,6 +49,9 @@ for path in glob.glob('docs/*.html') + glob.glob('meta/*.html') + glob.glob('met
 print('broken SVG blocks:', bad)
 sys.exit(1 if bad else 0)
 PY
+
+step "The arithmetic that decides what the picture looks like"
+node test.js || fail=1
 
 step "The extension carries no dependencies"
 if ls package.json package-lock.json yarn.lock node_modules 2>/dev/null | grep -q .; then

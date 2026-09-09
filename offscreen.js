@@ -6,7 +6,9 @@
  * downloads API wants a URL. So the pixels live here.
  */
 
-const MAX_DIM = 16384; // Chrome refuses a canvas with a side longer than this
+// MAX_CANVAS_DIM, canvasFit and tileRect come from geometry.js, loaded first by
+// offscreen.html. The arithmetic lives there because the page side needs the
+// same numbers and because it is the half worth testing.
 
 let canvas = null;
 let ctx = null;
@@ -16,17 +18,11 @@ let drawn = 0;
 
 function init({ width, height, dpr: ratio, maxMegapixels }) {
   dpr = ratio || 1;
-  const pw = width * dpr;
-  const ph = height * dpr;
-  const area = (maxMegapixels || 120) * 1e6;
+  const fit = canvasFit(width, height, dpr, maxMegapixels);
+  scale = fit.scale;
 
-  // Two ceilings apply: the browser's per side limit, and an area limit that
-  // keeps peak memory sane, because the bitmap costs four bytes per pixel while
-  // the encoder holds a second copy. Long pages meet the area one first.
-  scale = Math.min(1, MAX_DIM / pw, MAX_DIM / ph, Math.sqrt(area / (pw * ph)));
-
-  const w = Math.max(1, Math.floor(pw * scale));
-  const h = Math.max(1, Math.floor(ph * scale));
+  const w = fit.width;
+  const h = fit.height;
   canvas = new OffscreenCanvas(w, h);
   ctx = canvas.getContext('2d', { alpha: false, willReadFrequently: false });
   ctx.imageSmoothingQuality = 'high';
@@ -44,18 +40,9 @@ async function draw({ dataUrl, dx, dy, crop }) {
   const blob = await (await fetch(dataUrl)).blob();
   const bmp = await createImageBitmap(blob);
   try {
-    // Source rectangle inside the viewport capture, in device pixels, clamped
-    // so a fractional devicePixelRatio cannot ask for a pixel that is not there.
-    const sx = Math.max(0, Math.round(crop.x * dpr));
-    const sy = Math.max(0, Math.round(crop.y * dpr));
-    const sw = Math.min(Math.round(crop.w * dpr), bmp.width - sx);
-    const sh = Math.min(Math.round(crop.h * dpr), bmp.height - sy);
-    if (sw <= 0 || sh <= 0) return { drawn: false };
-
-    const tx = Math.round(dx * dpr * scale);
-    const ty = Math.round(dy * dpr * scale);
-    const tw = Math.max(1, Math.round(sw * scale));
-    const th = Math.max(1, Math.round(sh * scale));
+    const r = tileRect(crop, dx, dy, dpr, scale, bmp.width, bmp.height);
+    if (!r) return { drawn: false };
+    const { sx, sy, sw, sh, tx, ty, tw, th } = r;
 
     ctx.drawImage(bmp, sx, sy, sw, sh, tx, ty, tw, th);
     drawn++;

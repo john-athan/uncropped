@@ -218,29 +218,16 @@
     const el = S.scroller;
     const crop = cropRect();
     const total = { w: el.scrollWidth, h: el.scrollHeight };
-    const maxX = Math.max(0, total.w - crop.w);
-    const maxY = Math.max(0, total.h - crop.h);
 
-    // Tiles land on exact viewport steps and the last one in each axis is
-    // clamped, so it overlaps its neighbour. The overlap is drawn at its true
-    // scroll offset, which paints the same pixels over themselves. No seam.
-    const xs = [];
-    const ys = [];
-    for (let x = 0; x < maxX; x += crop.w) xs.push(x);
-    xs.push(maxX);
-    for (let y = 0; y < maxY; y += crop.h) ys.push(y);
-    ys.push(maxY);
-
-    const tiles = [];
-    for (const y of ys) for (const x of xs) tiles.push({ x, y });
+    const { tiles, columns, rows } = tilePlan(total, crop);
 
     return {
       version: VERSION,
       total,
       crop,
       tiles,
-      columns: xs.length,
-      rows: ys.length,
+      columns,
+      rows,
       dpr: window.devicePixelRatio || 1,
       isDocument: S.isDocument,
       scroller:
