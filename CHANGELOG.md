@@ -5,6 +5,8 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-09
+
 ### Changed
 - The store name is now "Uncropped - Full Page Screenshot", and the short
   description leads with the same words. Neither the old name nor the old

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Uncropped - Full Page Screenshot",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Full page screenshot, including the scrolling div your browser does not think is the page. Below the fold, off to the right.",
   "homepage_url": "https://john-athan.github.io/uncropped/",
   "minimum_chrome_version": "116",
