@@ -11,7 +11,7 @@
   if (window.__uncropped) return;
   window.__uncropped = true;
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.0.1';
 
   const S = {
     scroller: null,

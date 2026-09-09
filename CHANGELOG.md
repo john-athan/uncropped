@@ -5,6 +5,8 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-09
+
 ### Changed
 - CI's six checks moved out of the workflow file and into `tools/validate.sh`,
   runnable directly, through `oss check uncropped`, or from CI.
