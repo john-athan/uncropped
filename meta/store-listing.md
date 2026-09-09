@@ -9,11 +9,11 @@ checklist at the bottom before you press publish.
 
 ## Item name
 
-    Uncropped
+    Uncropped - Full Page Screenshot
 
-## Short description (132 characters max, this is 125)
+## Short description (132 characters max, this is 124)
 
-    Screenshots the whole page. Below the fold, off to the right, and inside the scrolling div your browser calls the whole page.
+    Full page screenshot, including the scrolling div your browser does not think is the page. Below the fold, off to the right.
 
 ## Category
 
@@ -49,8 +49,11 @@ place. Change one and change the other.
 
 ## Detailed description
 
-Chrome already has a button called "Capture full size screenshot". It lives in
-the DevTools command menu, and on a plain document it works.
+Uncropped takes a full page screenshot of the tab you are on: the entire
+scrollable area as one image, top to bottom and left to right.
+
+Chrome already has a button for this. It lives in the DevTools command menu, it
+is called "Capture full size screenshot", and on a plain document it works.
 
 Then you point it at an app: a dashboard, an inbox, an admin panel, anything
 built in the last decade. The page has a header that stays put and a panel that
@@ -59,11 +62,13 @@ is broken, but because on that page the document really is one screen tall. A
 container is doing the scrolling, and the browser has no reason to think that
 container is the page.
 
-Uncropped has a reason to think so.
+Uncropped has a reason to think so. That is what makes it a scrolling
+screenshot rather than a picture of the first screenful.
 
 WHAT IT DOES
 
-• Captures the entire scrollable area as one image, vertically and horizontally
+• Full page screenshot of the entire scrollable area as one image, vertically
+  and horizontally
 • Finds the real scroll container when the document itself does not scroll, which
   is the case that every other approach quietly gets wrong
 • Warms the page up first, so lazy loaded images below the fold are in the shot

@@ -5,6 +5,14 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+- The store name is now "Uncropped - Full Page Screenshot", and the short
+  description leads with the same words. Neither the old name nor the old
+  description contained the phrase people actually type, so the listing was
+  unfindable by anyone who did not already know it by name.
+- The detailed description says what the extension does in its first sentence,
+  before the story about the DevTools button.
+
 ## [1.0.1] - 2026-09-09
 
 ### Changed
