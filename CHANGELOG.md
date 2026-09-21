@@ -5,6 +5,11 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-21
+
+### Changed
+- Dependabot: fixed weekly slot, Sunday 06:00 Europe/Berlin
+
 ## [1.1.0] - 2026-09-09
 
 ### Changed
