@@ -5,6 +5,13 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-10-12
+
+### Changed
+- Undo page changes when setup fails, refuse empty plans, free blob on failed download; README names geometry.js
+- Bump the github-actions group with 2 updates (#5)
+- Run the fleet's shared extension checks (tools/webext.mjs)
+
 ## [1.1.1] - 2026-09-21
 
 ### Changed
