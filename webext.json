@@ -1,0 +1,23 @@
+{
+  "zip": "uncropped-{version}.zip",
+  "files": ["manifest.json", "background.js", "content.js", "geometry.js", "offscreen.html", "offscreen.js", "options.html", "options.js", "icons", "LICENSE"],
+  "ignore": ["await fetch\\(dataUrl\\)"],
+  "urls": ["^https?://(www\\.)?w3\\.org", "^https?://(www\\.)?github\\.com/john-athan"],
+  "versionIn": [{ "file": "content.js", "pattern": "VERSION\\s*=\\s*'([^']+)'" }],
+  "assets": {
+    "screenshots/store-icon.png": [128, 128],
+    "screenshots/store-1.png": [1280, 800],
+    "screenshots/store-2.png": [1280, 800],
+    "screenshots/store-3.png": [1280, 800],
+    "screenshots/store-promo-small.png": [440, 280],
+    "screenshots/store-promo-marquee.png": [1400, 560]
+  },
+  "storeIcon": "screenshots/store-icon.png",
+  "justify": {
+    "file": "meta/store-listing.md",
+    "after": "## Permission justifications",
+    "until": "\n## ",
+    "name": "^\\*\\*([a-zA-Z]+)\\*\\*$",
+    "extra": ["Remote"]
+  }
+}

@@ -28,7 +28,7 @@ extension, and reports along it are always welcome, in particular:
 - **Any way to make the extension issue a network request.** It makes none. It
   holds no host permissions, bundles no libraries, and loads no script, style
   or font from any remote source. The single `fetch` in the package decodes a
-  `data:` URL from `captureVisibleTab`, and `scripts/check-package.mjs` fails
+  `data:` URL from `captureVisibleTab`, and `tools/webext.mjs` fails
   the build on any other shape.
 
 ## What does not count
@@ -46,6 +46,6 @@ extension, and reports along it are always welcome, in particular:
 ## Verifying a claim yourself
 
 There is no build step and no dependency, so the source in this repository is
-what runs in the browser. `tools/package.sh` produces the uploaded zip from
+what runs in the browser. `node tools/webext.mjs package` produces the uploaded zip from
 those files and validates it, and `oss provenance uncropped` records where
 the code came from.

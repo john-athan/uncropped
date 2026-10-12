@@ -62,7 +62,7 @@ jobs:
       - name: Build and validate the package
         if: steps.creds.outputs.have == 'yes'
         run: |
-          tools/package.sh
+          node tools/webext.mjs package
           echo "ZIP=uncropped-$(node -p "require('./manifest.json').version").zip" >> "$GITHUB_ENV"
 
       - name: Upload to the store

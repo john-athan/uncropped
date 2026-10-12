@@ -20,12 +20,12 @@ the exact answers for every dashboard field live in
 ## Building the upload
 
 ```sh
-tools/package.sh                         # zip, then check it against store limits
+node tools/webext.mjs package              # zip, then check it against store limits
 tools/render-assets.sh                   # icons, promo tiles, store screenshots
-node scripts/check-package.mjs uncropped-1.0.0.zip
+node tools/webext.mjs check uncropped-1.0.0.zip
 ```
 
-`package.sh` runs the checker itself, so a green run is the whole gate. The
+`webext.mjs package` runs the checker itself, so a green run is the whole gate. The
 checker refuses a package whose manifest exceeds a store field limit, names a
 file it did not pack, carries anything but the extension, drifts out of sync
 with the version string in `content.js`, or contains an `eval`, a network call

@@ -214,8 +214,8 @@ Done, and re-checkable:
 - [x] Publish `docs/` to GitHub Pages so the privacy policy URL resolves. Live
       since 2026-09-01, verified HTTP 200 again on 2026-09-02:
       https://john-athan.github.io/uncropped/privacy-policy.html
-- [x] Build the package: `tools/package.sh`. Produces a 20 KB, 13 file zip and
-      validates it with `scripts/check-package.mjs`.
+- [x] Build the package: `node tools/webext.mjs package`. Produces a 20 KB, 13 file zip and
+      validates it with `tools/webext.mjs`.
 - [x] Run the provenance gate. Done 2026-09-01 over the whole tree, nine
       matches reviewed and cleared in THIRD_PARTY.md.
 - [x] Artwork present at the sizes the console demands: 128 icon, three

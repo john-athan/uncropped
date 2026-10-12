@@ -8,7 +8,7 @@ here is the platform. Reload the extension after a change; the page half is
 injected fresh on every capture, so no tab reload is needed.
 
 ```sh
-tools/package.sh                # the store zip, validated
+node tools/webext.mjs package     # the store zip, validated
 tools/render-assets.sh          # icons, promo tiles, store screenshots
 oss provenance uncropped        # where new code came from
 ```
@@ -41,7 +41,7 @@ an argument rather than a patch:
   a lockfile or a `node_modules` appears. The source in the repository is the
   shipped file, which is what makes the privacy claim checkable by a stranger.
 - **No host permissions, and no declared content script.** The extension can
-  only reach a page the user clicked it on. `scripts/check-package.mjs` fails
+  only reach a page the user clicked it on. `tools/webext.mjs` fails
   if either creeps back in.
 - **No network call.** Nothing is fetched, sent or measured. The one `fetch`
   in the package decodes a `data:` URL and the package checker allows that
@@ -52,7 +52,7 @@ an argument rather than a patch:
 ```sh
 node --check background.js && node --check content.js \
   && node --check offscreen.js && node --check options.js
-tools/package.sh
+node tools/webext.mjs package
 oss provenance uncropped
 ```
 

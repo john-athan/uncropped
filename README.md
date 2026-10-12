@@ -99,13 +99,13 @@ Every binary in the repo is generated from a source in `meta/`, and the store
 upload is generated from the tracked files:
 
 ```sh
-tools/package.sh                # the store zip, then check it against the store
+node tools/webext.mjs package     # the store zip, then check it against the store
 tools/render-assets.sh          # icons, promo tiles, store screenshots
 tools/render-assets.sh icons    # just icons/
 ```
 
-`package.sh` ships the extension and nothing else, then hands the zip to
-`scripts/check-package.mjs`, which refuses a package that exceeds a store field
+`webext.mjs package` ships the extension and nothing else, then checks the zip
+(tools/webext.mjs, configured by webext.json). It refuses a package that exceeds a store field
 limit, names a file it did not pack, carries anything but the extension, or
 contains an `eval`, a network call or an HTML injection that the listing says
 it does not. Submission itself is a runbook: [meta/PUBLISHING.md](meta/PUBLISHING.md).
