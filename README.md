@@ -50,7 +50,8 @@ action click
   -> restore the page, write the file
 ```
 
-Three files do the work. `content.js` is the page side and is the only part that
+Four files do the work. `geometry.js` is the arithmetic (tile plan, canvas fit, where each
+tile lands), shared by the other three and the only part with unit tests. `content.js` is the page side and is the only part that
 touches your page. `background.js` is the service worker and drives the run.
 `offscreen.js` owns the canvas, because a service worker has `OffscreenCanvas`
 but no `URL.createObjectURL`, and the downloads API wants a URL.

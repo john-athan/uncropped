@@ -156,21 +156,27 @@ async function run(tab) {
     flag('...', '#2b6cb0');
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['geometry.js', 'content.js'] });
 
-    const plan = await ask(tab.id, {
-      type: 'PREPARE',
-      opts: { prescroll: opts.prescroll },
-    });
-
-    await ensureOffscreen();
-    const sheet = await toCanvas({
-      type: 'INIT',
-      width: plan.total.w,
-      height: plan.total.h,
-      dpr: plan.dpr,
-      maxMegapixels: opts.maxMegapixels,
-    });
-
+    let plan;
     try {
+      // Everything from PREPARE on has changed the page, so everything from
+      // PREPARE on is undone in the finally, including a failed INIT.
+      plan = await ask(tab.id, {
+        type: 'PREPARE',
+        opts: { prescroll: opts.prescroll },
+      });
+      // A scroller that measures zero (collapsed, mid-transition) plans no
+      // tiles; without this the run would save a blank 1 px file and say so.
+      if (!plan.tiles.length) throw new Error('the page has nothing to capture, its scroll area measures zero');
+
+      await ensureOffscreen();
+      await toCanvas({
+        type: 'INIT',
+        width: plan.total.w,
+        height: plan.total.h,
+        dpr: plan.dpr,
+        maxMegapixels: opts.maxMegapixels,
+      });
+
       for (let i = 0; i < plan.tiles.length; i++) {
         const tile = plan.tiles[i];
         await assertStillInFront(tab.id, plan.href);
@@ -192,11 +198,18 @@ async function run(tab) {
 
     const out = await toCanvas({ type: 'FINISH', format: opts.format, quality: opts.quality });
     const ext = opts.format === 'jpeg' ? 'jpg' : 'png';
-    const id = await chrome.downloads.download({
-      url: out.url,
-      filename: `Uncropped/${plan.host}-${stamp()}.${ext}`,
-      saveAs: !!opts.saveAs,
-    });
+    let id;
+    try {
+      id = await chrome.downloads.download({
+        url: out.url,
+        filename: `Uncropped/${plan.host}-${stamp()}.${ext}`,
+        saveAs: !!opts.saveAs,
+      });
+    } catch (e) {
+      // No download means no onChanged event, so nothing else would free the blob.
+      chrome.runtime.sendMessage({ target: 'offscreen', type: 'REVOKE', url: out.url }).catch(() => {});
+      throw e;
+    }
 
     chrome.downloads.onChanged.addListener(function done(delta) {
       if (delta.id !== id) return;
