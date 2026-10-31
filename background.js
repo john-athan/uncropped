@@ -228,6 +228,11 @@ async function run(tab) {
     flag('');
     await toast(tab.id, 'Uncropped: ' + note, false);
     console.log('[uncropped]', { plan, out, gap, seconds: +secs });
+  } catch (e) {
+    // A failed run leaves the stitched canvas (up to ~480 MB at the default
+    // ceiling) alive in the offscreen document until the next INIT replaces it.
+    chrome.runtime.sendMessage({ target: 'offscreen', type: 'DISCARD' }).catch(() => {});
+    throw e;
   } finally {
     busy.delete(tab.id);
   }

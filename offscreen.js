@@ -78,7 +78,11 @@ chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
       if (msg.type === 'INIT') reply({ ok: true, data: init(msg) });
       else if (msg.type === 'DRAW') reply({ ok: true, data: await draw(msg) });
       else if (msg.type === 'FINISH') reply({ ok: true, data: await finish(msg) });
-      else if (msg.type === 'REVOKE') {
+      else if (msg.type === 'DISCARD') {
+        canvas = null;
+        ctx = null;
+        reply({ ok: true });
+      } else if (msg.type === 'REVOKE') {
         URL.revokeObjectURL(msg.url);
         reply({ ok: true });
       } else reply({ ok: false, error: 'unknown message ' + msg.type });
