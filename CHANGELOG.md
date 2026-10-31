@@ -5,6 +5,8 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-10-31
+
 ### Fixed
 - A capture that fails now frees the stitched canvas at once instead of holding
   it, up to about 480 MB, until the next capture.
