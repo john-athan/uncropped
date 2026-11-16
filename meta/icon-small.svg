@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Uncropped">
-  <title>Uncropped</title>
-  <rect width="128" height="128" rx="28" fill="#16191f"/>
-  <clipPath id="tileS"><rect width="128" height="128" rx="28"/></clipPath>
-  <g clip-path="url(#tileS)">
-    <rect x="45" y="-14" width="38" height="156" rx="6" fill="#ffffff"/>
-    <rect x="16" y="27" width="96" height="46" rx="12" fill="none" stroke="#ff6a42" stroke-width="10"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128"><defs><linearGradient id="unbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2028"/><stop offset="1" stop-color="#12151a"/></linearGradient><clipPath id="unc"><rect width="128" height="128" rx="28"/></clipPath></defs><rect width="128" height="128" rx="28" fill="url(#unbg)"/><g clip-path="url(#unc)"><rect x="40" y="-10" width="48" height="148" rx="4" fill="#f5f3ee"/>
+<rect x="46" y="10" width="36" height="20" rx="3" fill="#ff8a66"/>
+<g fill="#cbc6bb"><rect x="46" y="38" width="36" height="4" rx="2"/><rect x="46" y="47" width="28" height="4" rx="2"/><rect x="46" y="61" width="36" height="4" rx="2"/><rect x="46" y="70" width="36" height="4" rx="2"/><rect x="46" y="79" width="20" height="4" rx="2"/><rect x="46" y="93" width="36" height="4" rx="2"/><rect x="46" y="102" width="30" height="4" rx="2"/><rect x="46" y="116" width="36" height="4" rx="2"/></g></g>
+<rect x="30" y="52" width="68" height="36" rx="6" fill="none" stroke="#8e96a3" stroke-width="2.5" stroke-dasharray="5 4"/>
+<g fill="none" stroke="#ff6a42" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 32V16h16M96 16h16v16M112 96v16H96M32 112H16V96"/></g></svg>
