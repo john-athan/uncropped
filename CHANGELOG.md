@@ -5,6 +5,11 @@ versions follow Semantic Versioning.
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-11-16
+
+### Changed
+- New icon: crop marks pushed to the edges, the page running past the viewport
+
 ## [1.1.3] - 2026-10-31
 
 ### Fixed
