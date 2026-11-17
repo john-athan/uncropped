@@ -76,6 +76,12 @@ and fills its frame; the console rounds and shadows the outer 16 px of a store
 icon, which would clip the artwork. `tools/render-assets.sh store-icon` renders
 the padded one, and CI fails if that margin goes away.
 
+**The artwork does not ship with a release.** The store API uploads the
+package only. A new `screenshots/store-icon.png`, screenshot or promo tile has
+to be uploaded again by hand in the dashboard, on the Store listing tab, and the
+item submitted for review. `oss publish` names the files that changed since the
+version the store held.
+
 ## The privacy practices tab
 
 The console will not let you publish until every field here is filled in. The
