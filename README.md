@@ -1,4 +1,4 @@
-<img src="src/icons/icon128.png" width="72" alt="Uncropped">
+<img src="meta/icon.svg" width="72" alt="Uncropped">
 
 # Uncropped
 
