@@ -100,23 +100,11 @@ For remote code, select **"No, I am not using remote code."**
 ## After the first publish
 
 Reviews usually take a few days for a first submission and are faster after.
-Once the item exists it has an **item ID**, and updates can be automated:
-`.github/workflows/publish.yml` uploads and publishes on a version tag when
-four repository secrets are present. It checks for credentials first and exits
-successfully without them, so it stays inert until somebody decides otherwise.
-
-To create those secrets:
-
-1. In a Google Cloud project, enable the **Chrome Web Store API** and create an
-   **OAuth client ID** of type *Desktop app*.
-2. Authorise it once against the developer account for the scope
-   `https://www.googleapis.com/auth/chromewebstore`, and keep the refresh
-   token.
-3. Add `CWS_EXTENSION_ID`, `CWS_CLIENT_ID`, `CWS_CLIENT_SECRET` and
-   `CWS_REFRESH_TOKEN` to the repository's secrets.
-
-Google's walkthrough for that flow is at
-<https://developer.chrome.com/docs/webstore/using-api>.
+Once the item exists it has an **item ID**, and updates are uploaded from this
+machine: `oss release` cuts the version, and `oss publish uncropped` uploads it to
+the store with the credentials in the keychain (item `cws-kaleve`, set up once
+for every extension, see oss-kit's `docs/chrome-web-store.md`). Nothing about
+the store lives in a GitHub secret or a workflow.
 
 Then change the Install section of the README from "not on the Chrome Web
 Store yet" to the store URL, and set the repository's website field to it.
@@ -124,11 +112,9 @@ Store yet" to the store URL, and set the repository's website field to it.
 ## Releasing
 
 ```sh
-oss provenance uncropped                 # while the answer can still change the release
-git tag v1.0.0 && git push origin v1.0.0
+oss release uncropped --patch     # checks, provenance gate, version, tag, GitHub release
+oss publish uncropped             # the tagged version to the Chrome Web Store
 ```
 
-The tag runs `publish.yml`, which does nothing until the four secrets exist.
-The provenance gate no longer runs in CI. It runs from the fleet tool, above
-before the tag and monthly across every project, so a forgotten run still gets
-an answer.
+`oss release` runs the provenance gate before it tags, while a match can still
+change what ships; the weekly fleet sweep catches anything that slipped past.

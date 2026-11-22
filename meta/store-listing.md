@@ -252,5 +252,5 @@ Needs a person, because it needs a logged in Google account:
 - [x] Submit for review. The listing above is live, which the console does not
       allow before a review passes.
 - [ ] After the item exists, put the store URL in the README's Install section
-      and in the repository's website field, and set up the four secrets so
-      the next version publishes from a tag.
+      and in the repository's website field. Later versions go up with
+      `oss publish uncropped`.
