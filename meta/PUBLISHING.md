@@ -14,8 +14,8 @@ the exact answers for every dashboard field live in
    listing. The console prompts for this on first use and blocks publishing
    until the address is verified by email.
 3. **A hosted privacy policy URL.** Already live at
-   <https://john-athan.github.io/uncropped/privacy-policy.html>, deployed from
-   `docs/` by `.github/workflows/pages.yml`.
+   <https://john-athan.github.io/uncropped/privacy-policy.html>, GitHub Pages
+   serves it straight from `docs/` on `main`.
 
 ## Building the upload
 
