@@ -1,99 +1,92 @@
 #!/usr/bin/env bash
-# Render every binary asset in this repo from its source in meta/.
+# Render every binary asset of an extension from its source in meta/.
+#
+# This file is owned by oss-kit and identical in every extension. Which html
+# or svg becomes which png at which size is declared in webext.json under
+# "render", so a difference between extensions is a fact in one config file
+# rather than a fork of this script.
 #
 # The renderer is the browser the extension targets, which is already installed,
 # already colour manages the way the store will show the result, and removes the
 # need for a design tool or an image library in the dependency list.
 #
-#   tools/render-assets.sh            # everything
-#   tools/render-assets.sh icons      # just icons/
-#   tools/render-assets.sh promo      # just the store tiles
+#   tools/render-assets.sh            # everything webext.json declares
+#   tools/render-assets.sh icons      # just the toolbar icons
 #   tools/render-assets.sh store-icon # just the padded 128 store icon
+#   tools/render-assets.sh <group>    # one group of pages, e.g. promo or shots
+#
+# webext.json "render":
+#   icons      [{ "from": "meta/icon.svg", "sizes": [48, 128] }, ...]
+#              svg -> icons/icon<size>.png, drawn into a transparent square.
+#   iconCommand  a command that makes the icons instead, run from the repo
+#              root (muscle-memory draws them with its own Rust crate).
+#   storeIcon  { "from": "meta/icon.svg", "inset": 16 }, written to the path
+#              webext.json "storeIcon" names. The store wants 96 px of artwork
+#              in a 128 px frame: the console draws its own shadow and
+#              rounding in the 16 px margin, and a full bleed icon gets clipped.
+#   pages      [{ "group": "shots", "from": "meta/shot-1.html",
+#                 "to": "screenshots/store-1.png", "size": [1280, 800] }, ...]
+#              html -> png at that window size, on an opaque white page.
 set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
+
+# Node reads the config because it is already required and a shell has no JSON.
+# One tab separated line per job: kind, source, target, width, height, inset.
+JOBS="$(node -e '
+  const c = JSON.parse(require("fs").readFileSync("webext.json", "utf8"));
+  const r = c.render ?? {};
+  const out = [];
+  if (r.iconCommand) out.push(["iconCommand", r.iconCommand, "", "", "", ""]);
+  else for (const i of r.icons ?? []) for (const s of i.sizes) out.push(["icon", i.from, `src/icons/icon${s}.png`, s, s, 0]);
+  if (r.storeIcon) out.push(["store-icon", r.storeIcon.from, c.storeIcon, 128, 128, r.storeIcon.inset ?? 16]);
+  for (const p of r.pages ?? []) out.push([p.group, p.from, p.to, p.size[0], p.size[1], 0]);
+  for (const j of out) console.log(j.join("\t"));
+')"
+
+want="${1:-all}"
+known="all icons $(printf '%s\n' "$JOBS" | cut -f1 | sort -u | tr '\n' ' ')"
+case " $known " in *" $want "*) ;; *) echo "usage: $0 [all|icons|store-icon|<group>]  (known here: $known)" >&2; exit 2 ;; esac
 
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 [ -x "$CHROME" ] || CHROME="$(command -v google-chrome || command -v chromium || true)"
 [ -n "$CHROME" ] && [ -x "$CHROME" ] || { echo "no Chrome binary found; set CHROME=" >&2; exit 1; }
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-shoot() { # shoot <html> <out.png> <w> <h> [--opaque]
-  local html="$1"
-  local out="$2"
-  local w="$3"
-  local h="$4"
+shoot() { # shoot <html> <out.png> <w> <h> <transparent|opaque>
   local bg="00000000"
-  [ "${5:-}" = "--opaque" ] && bg="ffffffff"
+  [ "$5" = "opaque" ] && bg="ffffffff"
+  mkdir -p "$(dirname "$2")"
   "$CHROME" --headless --disable-gpu --hide-scrollbars \
     --force-device-scale-factor=1 \
     --default-background-color="$bg" \
-    --window-size="$w,$h" \
-    --screenshot="$out" "file://$html" >/dev/null 2>&1
-  [ -s "$out" ] || { echo "render failed: $out" >&2; exit 1; }
+    --window-size="$3,$4" \
+    --screenshot="$2" "file://$1" >/dev/null 2>&1
+  [ -s "$2" ] || { echo "render failed: $2" >&2; exit 1; }
 }
 
-wrap() { # wrap <svg> <size> [inset] -> html that paints it at that size
-  local svg="$1"
-  local size="$2"
-  local inset="${3:-0}"
-  local art=$((size - 2 * inset))
-  local out
-  out="$WORK/wrap-$size-$inset-$(basename "$svg" .svg).html"
+wrap() { # wrap <svg> <size> <inset> -> html that paints it at that size
+  local art=$(($2 - 2 * $3))
+  local out="$WORK/wrap-$2-$3-$(basename "$1" .svg).html"
   {
     printf '<meta charset="utf-8"><style>html,body{margin:0;padding:0;background:transparent}'
-    printf 'body{width:%spx;height:%spx;display:grid;place-items:center}' "$size" "$size"
+    printf 'body{width:%spx;height:%spx;display:grid;place-items:center}' "$2" "$2"
     printf 'svg{display:block;width:%spx;height:%spx}</style>' "$art" "$art"
-    cat "$svg"
+    cat "$1"
   } > "$out"
   echo "$out"
 }
 
-do_icons() {
-  mkdir -p "$ROOT/icons"
-  # Small sizes get the simplified master: at 16 px the page furniture turns to mud.
-  for size in 16 32; do
-    shoot "$(wrap "$ROOT/meta/icon-small.svg" "$size")" "$ROOT/icons/icon$size.png" "$size" "$size"
-  done
-  for size in 48 128; do
-    shoot "$(wrap "$ROOT/meta/icon.svg" "$size")" "$ROOT/icons/icon$size.png" "$size" "$size"
-  done
-  echo "icons: $(cd "$ROOT/icons" && echo *.png)"
-}
-
-do_store_icon() {
-  mkdir -p "$ROOT/screenshots"
-  # The store icon is not the toolbar icon. Google's image guidelines put 96 px
-  # of artwork in the middle of a 128 px frame and keep the remaining 16 px on
-  # each side transparent, because the console draws its own shadow and rounding
-  # in that margin. Shipping the full bleed icons/icon128.png here gets the
-  # artwork clipped by that treatment.
-  shoot "$(wrap "$ROOT/meta/icon.svg" 128 16)" "$ROOT/screenshots/store-icon.png" 128 128
-  echo "store icon: store-icon.png"
-}
-
-do_promo() {
-  mkdir -p "$ROOT/screenshots"
-  shoot "$ROOT/meta/promo-small.html"   "$ROOT/screenshots/store-promo-small.png"   440  280 --opaque
-  shoot "$ROOT/meta/promo-marquee.html" "$ROOT/screenshots/store-promo-marquee.png" 1400 560 --opaque
-  echo "promo: store-promo-small.png store-promo-marquee.png"
-}
-
-do_shots() {
-  mkdir -p "$ROOT/screenshots"
-  for n in 1 2 3; do
-    [ -f "$ROOT/meta/shot-$n.html" ] || continue
-    shoot "$ROOT/meta/shot-$n.html" "$ROOT/screenshots/store-$n.png" 1280 800 --opaque
-  done
-  echo "shots: $(cd "$ROOT/screenshots" && ls store-[0-9].png 2>/dev/null | tr '\n' ' ')"
-}
-
-case "${1:-all}" in
-  icons) do_icons ;;
-  store-icon) do_store_icon ;;
-  promo) do_promo ;;
-  shots) do_shots ;;
-  all) do_icons; do_store_icon; do_promo; do_shots ;;
-  *) echo "usage: $0 [all|icons|store-icon|promo|shots]" >&2; exit 2 ;;
-esac
+while IFS=$'\t' read -r kind from to w h inset; do
+  [ -n "$kind" ] || continue
+  case "$want" in all|"$kind") ;; icons) [ "$kind" = icon ] || [ "$kind" = iconCommand ] || continue ;; *) continue ;; esac
+  case "$kind" in
+    iconCommand) sh -c "$from" ;;
+    icon|store-icon) shoot "$(wrap "$ROOT/$from" "$w" "$inset")" "$ROOT/$to" "$w" "$h" transparent ;;
+    *) shoot "$ROOT/$from" "$ROOT/$to" "$w" "$h" opaque ;;
+  esac
+  echo "$kind: $to"
+done <<< "$JOBS"

@@ -28,7 +28,7 @@ node tools/webext.mjs check uncropped-1.0.0.zip
 `webext.mjs package` runs the checker itself, so a green run is the whole gate. The
 checker refuses a package whose manifest exceeds a store field limit, names a
 file it did not pack, carries anything but the extension, drifts out of sync
-with the version string in `content.js`, or contains an `eval`, a network call
+with the version string in `src/content.js`, or contains an `eval`, a network call
 or an HTML injection that the listing says it does not. A rejection costs a
 review cycle, which is days rather than minutes.
 
@@ -41,12 +41,12 @@ than no listing.
 
 The zip is what a reviewer installs, so install it the same way. Unzip it into
 a scratch folder, load *that* folder unpacked from `chrome://extensions`, and
-capture all three shapes in `tests/pages/`:
+capture all three shapes in `test/pages/`:
 
 ```sh
 rm -rf /tmp/uncropped-check && mkdir -p /tmp/uncropped-check
 unzip -q uncropped-1.0.0.zip -d /tmp/uncropped-check
-open tests/pages/index.html
+open test/pages/index.html
 ```
 
 | Page | What a correct capture looks like |
@@ -71,7 +71,7 @@ Copy and answers: [store-listing.md](store-listing.md). Artwork:
 
 Category **Developer Tools**, language **English**.
 
-Do not put `icons/icon128.png` in the store icon field. It is the toolbar icon
+Do not put `src/icons/icon128.png` in the store icon field. It is the toolbar icon
 and fills its frame; the console rounds and shadows the outer 16 px of a store
 icon, which would clip the artwork. `tools/render-assets.sh store-icon` renders
 the padded one, and CI fails if that margin goes away.

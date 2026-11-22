@@ -1,4 +1,4 @@
-<img src="icons/icon128.png" width="72" alt="Uncropped">
+<img src="src/icons/icon128.png" width="72" alt="Uncropped">
 
 # Uncropped
 
@@ -19,7 +19,7 @@ Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/jbm
 
 1. `git clone https://github.com/john-athan/uncropped`
 2. Open `chrome://extensions`, turn on **Developer mode**
-3. **Load unpacked**, and pick the repo folder
+3. **Load unpacked**, and pick the `src/` folder
 4. Pin the toolbar icon, or use <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>Y</kbd>
 
 The image lands in `Downloads/Uncropped/`.
@@ -102,7 +102,7 @@ upload is generated from the tracked files:
 ```sh
 node tools/webext.mjs package     # the store zip, then check it against the store
 tools/render-assets.sh          # icons, promo tiles, store screenshots
-tools/render-assets.sh icons    # just icons/
+tools/render-assets.sh icons    # just src/icons/
 ```
 
 `webext.mjs package` ships the extension and nothing else, then checks the zip
@@ -119,7 +119,7 @@ dependency list. Icons come from `meta/icon.svg`, with a simplified master for
 ## Testing
 
 Three page shapes, because they fail in different ways. Open
-`tests/pages/index.html` from disk and capture each one:
+`test/pages/index.html` from disk and capture each one:
 
 | | What it is | What a correct capture looks like |
 |---|---|---|

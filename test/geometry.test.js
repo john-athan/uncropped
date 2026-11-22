@@ -6,13 +6,11 @@
 // looking like it worked, which is where the tiles land and how they are
 // scaled. That part is geometry.js, and this is it under node.
 //
-// Run directly (`node test.js`), through `tools/validate.sh`, or from CI.
+// Run with `node --test test/`, through `tools/validate.sh`, or from CI.
 
 const assert = require('node:assert/strict');
-const { MAX_CANVAS_DIM, tilePlan, canvasFit, tileRect } = require('./geometry.js');
-
-let checks = 0;
-const check = (name, fn) => { fn(); checks++; console.log(`  ok ${name}`); };
+const { test: check } = require('node:test');
+const { MAX_CANVAS_DIM, tilePlan, canvasFit, tileRect } = require('../src/geometry.js');
 
 // ---------------------------------------------------------------- tile plan
 
@@ -202,5 +200,3 @@ check('a real capture stitches into a canvas with every row accounted for', () =
     assert.ok(rows.has(y), `canvas row ${y} of ${fit.height} was never drawn`);
   }
 });
-
-console.log(`\ntest: ${checks} checks passed`);

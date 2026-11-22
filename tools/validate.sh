@@ -12,7 +12,7 @@ fail=0
 node tools/webext.mjs validate || fail=1
 
 printf '\n== The arithmetic that decides what the picture looks like\n'
-node test.js || fail=1
+node --test test/ || fail=1
 
 if [ "$fail" -ne 0 ]; then printf '\nvalidate: FAILED\n'; exit 1; fi
 printf '\nvalidate: everything passes\n'

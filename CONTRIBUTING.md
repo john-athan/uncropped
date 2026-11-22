@@ -2,7 +2,7 @@
 
 ## Running it
 
-Load the repository folder unpacked from `chrome://extensions` with Developer
+Load the `src/` folder unpacked from `chrome://extensions` with Developer
 mode on. There is no build step and no dependency, deliberately: everything
 here is the platform. Reload the extension after a change; the page half is
 injected fresh on every capture, so no tab reload is needed.
@@ -15,10 +15,11 @@ oss provenance uncropped        # where new code came from
 
 ## Testing a change
 
-There is no unit test suite, because almost nothing here is a pure function.
+The only pure function is the tile arithmetic in `src/geometry.js`, and `node --test test/`
+covers it. Almost nothing else here can be tested that way.
 What the extension does is scroll a real page and photograph it, so the tests
 are three pages that break in three different ways. Open
-`tests/pages/index.html` from disk and capture each one:
+`test/pages/index.html` from disk and capture each one:
 
 | | What it is | What a correct capture looks like |
 |---|---|---|
@@ -28,7 +29,7 @@ are three pages that break in three different ways. Open
 
 `app-shell.html` is the case the built in DevTools capture gets wrong, and the
 reason the extension exists. Re-run it after any change to the scroller search.
-A pull request that touches `content.js` should say which of the three were
+A pull request that touches `src/content.js` should say which of the three were
 captured and on what device pixel ratio, because a fractional DPR is where the
 tile arithmetic goes wrong.
 
@@ -50,8 +51,7 @@ an argument rather than a patch:
 ## Before opening a pull request
 
 ```sh
-node --check background.js && node --check content.js \
-  && node --check offscreen.js && node --check options.js
+tools/validate.sh                 # every check, the unit tests and the package
 node tools/webext.mjs package
 oss provenance uncropped
 ```
